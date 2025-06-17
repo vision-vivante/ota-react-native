@@ -64,7 +64,7 @@ const ForgotPassword = () => {
     }
     console.log('Pressed');
     const details = {
-      email: email,
+      email: email.toLowerCase().trim(),
     };
     const result = await dispatch(forgotPasswordThunk({details: details}));
     console.log('result', result);

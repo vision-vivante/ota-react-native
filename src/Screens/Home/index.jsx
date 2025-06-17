@@ -35,6 +35,7 @@ const HotelNavigator = () => {
         name="ReviewUserDetails"
         component={ReviewUserDetails}
       />
+      <HotelStack.Screen name="AddCard" component={AddCard} />
       <HotelStack.Screen
         name="HotelPaymentsPage"
         component={HotelPaymentsPage}

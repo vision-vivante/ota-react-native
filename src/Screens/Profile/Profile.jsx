@@ -31,6 +31,7 @@ const Profile = () => {
     ConfirmationModalContext,
   );
   const dispatch = useDispatch();
+  console.log('Show cancel modal', showCancelModal);
 
   useEffect(() => {
     const backAction = () => {
@@ -51,20 +52,30 @@ const Profile = () => {
 
   useFocusEffect(
     useCallback(() => {
+      if (!userProfileData || Object.keys(userProfileData).length === 0) {
       dispatch(getUserProfileData({userToken, contentToken}));
-    }, [contentToken, dispatch, userToken]),
+      }
+    }, [contentToken, dispatch, userToken, userProfileData]),
   );
-  console.log(userProfileData);
 
   return (
     <>
+      {showCancelModal && (
+        <ConfirmationModal
+          title={'Are you sure you want to logout?'}
+          handleYesPressed={() => {
+            dispatch(logout());
+            setShowCancelModal(false);
+          }}
+          handleNoPressed={() => setShowCancelModal(false)}
+        />
+      )}
       {isLoading && (
         <Animated.View
           entering={FadeIn.duration(25)}
           exiting={FadeOut.duration(25)}
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            height: Matrics.screenHeight,
             position: 'absolute',
             top: 0,
             left: 0,
@@ -76,15 +87,6 @@ const Profile = () => {
         </Animated.View>
       )}
       <ScrollView>
-        {showCancelModal && (
-          <ConfirmationModal
-            title={'Are you sure you want to logout?'}
-            handleYesPressed={() => {
-              dispatch(logout());
-              setShowCancelModal(false);
-            }}
-          />
-        )}
         <View>
           <ImageBackground
             source={Images.PROFILE_BACKGROUND}

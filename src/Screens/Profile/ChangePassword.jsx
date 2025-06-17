@@ -72,7 +72,7 @@ const ChangePassword = ({route}) => {
       return error;
     }
     if (value !== newPassword) {
-      const error = 'Password do not match';
+      const error = 'Confirm Password does not match';
       return error;
     }
   };

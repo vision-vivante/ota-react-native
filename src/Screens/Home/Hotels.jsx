@@ -44,6 +44,8 @@ import {
 } from '../../Redux/Reducers/HotelReducer/GetHotelSlice';
 import {HeaderOptionContext} from '../../Context/HeaderOptionContext';
 import {TouchableWithoutFeedback} from '@gorhom/bottom-sheet';
+import TopHotelComponent from '../../Components/HotelComponents/TopHotelComponent';
+import TopCitiesComponent from '../../Components/HotelComponents/TopCitiesComponent';
 const Hotels = ({navigation}) => {
   const [activeTab, setActiveTab] = useState('Hotels');
   const {userProfileData} = useSelector(state => state.userProfile);
@@ -374,12 +376,12 @@ const Hotels = ({navigation}) => {
                   <View style={styles.homeHeaderSecondaryOptions}>
                     <LanguageSelector />
                     <CurrencySelector />
-                    <View style={styles.secondaryOptions}>
+                    {/* <View style={styles.secondaryOptions}>
                       <Image
                         style={styles.secondaryOptionsImages}
                         source={Images.DOTS}
                       />
-                    </View>
+                    </View> */}
                   </View>
                 </View>
                 <View>
@@ -485,16 +487,8 @@ const Hotels = ({navigation}) => {
                     </View>
                   ) : (
                     <View style={styles.emptyFlatListContainer}>
-                      <Image
-                        style={styles.emptyFlatListImage}
-                        source={Images.NO_RESULT_FOUND}
-                      />
-                      <Text style={styles.emptyFlatListText}>
-                        No Result Found
-                      </Text>
-                      <Text style={styles.emptyFlatListSubText}>
-                        Try changing the dates of your search
-                      </Text>
+                      <TopHotelComponent />
+                      <TopCitiesComponent />
                     </View>
                   )
                 }
@@ -660,11 +654,7 @@ const styles = StyleSheet.create({
     height: Matrics.s(100),
     resizeMode: 'contain',
   },
-  emptyFlatListContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: Matrics.screenHeight * 0.3,
-  },
+  emptyFlatListContainer: {},
   filterSortContainer: {
     flexDirection: 'row',
     justifyContent: 'center',

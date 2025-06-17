@@ -1,6 +1,6 @@
 // Splash.js
 import React, {useEffect} from 'react';
-import {View, StyleSheet, Image, SafeAreaView, I18nManager} from 'react-native';
+import {View, StyleSheet, Image, SafeAreaView, I18nManager, Platform} from 'react-native';
 import Images from './Config/Images';
 import colors from './Config/AppStyling/colors';
 import {Matrics} from './Config/AppStyling';

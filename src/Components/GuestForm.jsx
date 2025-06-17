@@ -275,7 +275,9 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
       age: validateAge(formData.age),
       email: isPrimaryGuest
         ? validateEmail(formData.email)
-        : validateEmail(formData.email),
+        : formData.email.trim()
+        ? validateEmail(formData.email)
+        : '',
       documentType: isPrimaryGuest
         ? validateDocumentType(formData.documentType)
         : '',
@@ -569,7 +571,7 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
                                   {item.cityName}
                                 </Text>
                                 <Text style={styles.destinationName}>
-                                  {item.destinationName}
+                                  {item.countryName}
                                 </Text>
                               </View>
                             </TouchableOpacity>
@@ -704,7 +706,7 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
           )}
           <View style={styles.formGroup}>
             <Text style={styles.label}>
-              Email <Text style={styles.asterisk}>*</Text>
+              Email {isPrimaryGuest && <Text style={styles.asterisk}>*</Text>}
             </Text>
             <TextInput
               style={[styles.input, errors.email ? styles.inputError : null]}

@@ -2,7 +2,11 @@ import {View, Text} from 'react-native';
 import React from 'react';
 import {COLOR, Matrics, typography} from '../../../Config/AppStyling';
 
-const BookingStatusTag = ({status}) => {
+const BookingStatusTag = ({
+  status,
+  borderRadius = Matrics.vs(7),
+  textAlign = 'center',
+}) => {
   const borderAndBackgroundColorAndText = () => {
     switch (status?.toString()) {
       case '1':
@@ -60,7 +64,7 @@ const BookingStatusTag = ({status}) => {
         borderColor,
         paddingHorizontal: Matrics.scale(5),
         paddingVertical: Matrics.vs(2),
-        borderRadius: Matrics.scale(7),
+        borderRadius: borderRadius,
         alignContent: 'flex-start',
       }}>
       <Text
@@ -68,6 +72,7 @@ const BookingStatusTag = ({status}) => {
           color,
           fontFamily: typography.fontFamily.Montserrat.SemiBold,
           fontSize: typography.fontSizes.fs10,
+          textAlign,
         }}>
         {title}
       </Text>

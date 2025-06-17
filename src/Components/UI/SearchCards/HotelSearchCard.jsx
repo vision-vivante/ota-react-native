@@ -387,7 +387,7 @@ const HotelSearchCard = () => {
                         <View>
                           <Text style={styles.cityName}>{item.cityName}</Text>
                           <Text style={styles.destinationName}>
-                            {item.destinationName}
+                            {item.countryName}
                           </Text>
                         </View>
                       </TouchableOpacity>
@@ -539,7 +539,7 @@ const HotelSearchCard = () => {
                 color: COLOR.DARK_TEXT_COLOR,
               }}>
               {hotelStayStartDate
-                ? dayjs(hotelStayStartDate).format('MM-DD-YYYY')
+                ? dayjs(hotelStayStartDate).format('ddd DD MMM')
                 : 'Check-In'}
             </Text>
             <Text
@@ -550,7 +550,7 @@ const HotelSearchCard = () => {
                 marginLeft: Matrics.s(10),
               }}>
               {hotelStayEndDate
-                ? dayjs(hotelStayEndDate).format('MM-DD-YYYY')
+                ? dayjs(hotelStayEndDate).format('ddd DD MMM')
                 : 'Check-Out'}
             </Text>
           </View>

@@ -55,6 +55,10 @@ const EditProfile = () => {
   const {userProfileData, isLoading} = useSelector(state => state.userProfile);
   const {cityDetails, loadingCityDetails} = useSelector(state => state.getCity);
 
+  // Add refs for scrolling functionality
+  const scrollViewRef = useRef(null);
+  const cityInputRef = useRef(null);
+
   const initialProfile = {
     email: userProfileData?.email || '',
     phone: userProfileData?.phone_number?.toString() || '',
@@ -96,6 +100,7 @@ const EditProfile = () => {
   const bottomSheetModalRef = useRef(null);
   const [showFlatList, setShowFlatList] = useState(false);
   const [selectedCityIndex, setSelectedCityIndex] = useState(null);
+
   const updateHasChanges = (field, newValue) => {
     const initialValue = initialProfile[field];
     if (newValue !== initialValue) {
@@ -229,8 +234,6 @@ const EditProfile = () => {
           const response = await dispatch(
             getCityDetailsThunk({cityName: searchText}),
           );
-          console.log('[debouncedSearch] API Response:', response);
-          console.log('[debouncedSearch] City Details:', response.payload);
         } catch (error) {
           console.error('Error getting city details', error);
         }
@@ -260,8 +263,6 @@ const EditProfile = () => {
   };
 
   const handleCityFlatListPress = (cityName, index) => {
-    console.log('[handleCityFlatListPress] Pressed city:', cityName);
-    console.log('[handleCityFlatListPress] City details:', cityDetails[index]);
     Keyboard.dismiss();
     setSelectedCityIndex(index);
     setCity(cityName);
@@ -287,6 +288,34 @@ const EditProfile = () => {
     setCity(value);
     setErrors(prev => ({...prev, city: validateCity(value)}));
     updateHasChanges('city', value);
+  };
+
+  // Add function to handle city input focus with auto-scroll
+  const handleCityInputFocus = () => {
+    setCity('');
+    setShowFlatList(false);
+
+    // Auto-scroll to city input position after a small delay
+    setTimeout(() => {
+      if (cityInputRef.current && scrollViewRef.current) {
+        cityInputRef.current.measure((x, y, width, height, pageX, pageY) => {
+          // Calculate scroll position to ensure city dropdown + state/zip inputs are visible
+          // Scroll to show the city input near the top with space for dropdown below
+          const scrollPosition = Math.max(0, pageY - 150);
+
+          scrollViewRef.current.scrollTo({
+            y: scrollPosition,
+            animated: true,
+          });
+        });
+      } else {
+        // Fallback if refs are not available - scroll to a reasonable position
+        scrollViewRef.current?.scrollTo({
+          y: 250,
+          animated: true,
+        });
+      }
+    }, 100); // Small delay to ensure layout is ready
   };
 
   const handleStateChange = value => {
@@ -357,7 +386,6 @@ const EditProfile = () => {
   const handleProfilePictureFromCamera = () => {
     bottomSheetModalRef.current?.dismiss();
     launchCamera({mediaType: 'photo', cameraType: 'back'}, response => {
-      console.log('response', response);
       if (!response.didCancel && response.assets) {
         const newPic = response.assets[0].uri;
         setProfilePic(newPic);
@@ -369,7 +397,13 @@ const EditProfile = () => {
   // Handle Profile Update
   const editProfile = async () => {
     if (!validateForm()) {
-      console.log('[editProfile] Validation Error:', errors);
+      // Only log if there are actual validation errors (not empty strings)
+      const hasActualErrors = Object.values(errors).some(
+        error => error && error.trim() !== '',
+      );
+      if (hasActualErrors) {
+        console.log('[editProfile] Validation Error:', errors);
+      }
       errorToast('Validation Error', 'Please fix the errors in the form.');
       return;
     }
@@ -444,11 +478,19 @@ const EditProfile = () => {
               navigation.goBack();
               setShowCancelModal(false);
             }}
+            handleNoPressed={() => {
+              setShowCancelModal(false);
+            }}
           />
         )}
         <BottomSheetModalProvider>
-          <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-            <KeyboardAwareScrollView style={styles.containerMain}>
+          <TouchableWithoutFeedback
+            keyboardShouldPersistTaps="handled"
+            onPress={Keyboard.dismiss}>
+            <KeyboardAwareScrollView
+              ref={scrollViewRef}
+              style={styles.containerMain}
+              keyboardShouldPersistTaps="handled">
               <NormalHeader
                 title={i18n.t('EditProfile.title')}
                 onCrossPress={handleCrossPress}
@@ -568,7 +610,7 @@ const EditProfile = () => {
                     {i18n.t('EditProfile.city')}{' '}
                     <Text style={styles.requiredAsterisk}>*</Text>
                   </Text>
-                  <View style={styles.cityInputContainer}>
+                  <View ref={cityInputRef} style={styles.cityInputContainer}>
                     <TextInput
                       style={[
                         styles.input,
@@ -576,10 +618,7 @@ const EditProfile = () => {
                       ]}
                       value={city}
                       onChangeText={handleCityChange}
-                      onFocus={() => {
-                        setCity('');
-                        setShowFlatList(false);
-                      }}
+                      onFocus={handleCityInputFocus}
                       placeholder={i18n.t('EditProfile.cityPlaceholder')}
                       placeholderTextColor="#999"
                       keyboardShouldPersistTaps="handled"
@@ -608,27 +647,33 @@ const EditProfile = () => {
                             onScrollBeginDrag={() => {
                               Keyboard.dismiss();
                             }}
-                            renderItem={({item, index}) => (
-                              <TouchableOpacity
-                                style={styles.cityItem}
-                                onPress={() =>
-                                  handleCityFlatListPress(item.cityName, index)
-                                }
-                                activeOpacity={0.7}>
-                                <Image
-                                  source={Images.DROPDOWN_LOCATION}
-                                  style={styles.cityLocationIcon}
-                                />
-                                <View style={styles.cityTextContainer}>
-                                  <Text style={styles.cityName}>
-                                    {item.cityName}
-                                  </Text>
-                                  <Text style={styles.destinationName}>
-                                    {item.destinationName}
-                                  </Text>
-                                </View>
-                              </TouchableOpacity>
-                            )}
+                            renderItem={({item, index}) => {
+                              console.log('item', item);
+                              return (
+                                <TouchableOpacity
+                                  style={styles.cityItem}
+                                  onPress={() =>
+                                    handleCityFlatListPress(
+                                      item.cityName,
+                                      index,
+                                    )
+                                  }
+                                  activeOpacity={0.7}>
+                                  <Image
+                                    source={Images.DROPDOWN_LOCATION}
+                                    style={styles.cityLocationIcon}
+                                  />
+                                  <View style={styles.cityTextContainer}>
+                                    <Text style={styles.cityName}>
+                                      {item.cityName}
+                                    </Text>
+                                    <Text style={styles.destinationName}>
+                                      {item.countryName}
+                                    </Text>
+                                  </View>
+                                </TouchableOpacity>
+                              );
+                            }}
                           />
                         )
                       )}

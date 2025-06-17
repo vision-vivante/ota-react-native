@@ -62,6 +62,8 @@ const ReviewUserDetails = () => {
       if (savedCard) {
         navigation.navigate('HotelPaymentsPage');
       } else {
+        console.log('No saved card found, navigating to AddCard');
+
         navigation.navigate('AddCard');
       }
     } catch (error) {
@@ -108,43 +110,71 @@ const ReviewUserDetails = () => {
         {isExpanded && (
           <View style={styles.accordionContent}>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Email:</Text>
-              <Text style={styles.detailValue}>{guest.email || 'N/A'}</Text>
+              <Text style={styles.detailLabel}>First Name:</Text>
+              <Text style={styles.detailValue}>{guest.firstName || 'N/A'}</Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Phone:</Text>
-              <Text style={styles.detailValue}>{guest.phone || 'N/A'}</Text>
+              <Text style={styles.detailLabel}>Last Name:</Text>
+              <Text style={styles.detailValue}>{guest.lastName || 'N/A'}</Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Gender:</Text>
               <Text style={styles.detailValue}>{guest.gender || 'N/A'}</Text>
             </View>
             <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Document Type:</Text>
-              <Text style={styles.detailValue}>
-                {guest.documentType || 'N/A'}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Document Number:</Text>
-              <Text style={styles.detailValue}>
-                {guest.documentNumber || 'N/A'}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Country:</Text>
-              <Text style={styles.detailValue}>{guest.country || 'N/A'}</Text>
-            </View>
-            <View style={styles.detailRow}>
-              <Text style={styles.detailLabel}>Postal Code:</Text>
-              <Text style={styles.detailValue}>
-                {guest.postalCode || 'N/A'}
-              </Text>
-            </View>
-            <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Age:</Text>
               <Text style={styles.detailValue}>{guest.age || 'N/A'}</Text>
             </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Email:</Text>
+              <Text style={styles.detailValue}>{guest.email || 'N/A'}</Text>
+            </View>
+            {isPrimaryGuest && (
+              <>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Phone:</Text>
+                  <Text style={styles.detailValue}>
+                    {guest.countryCode && guest.phone
+                      ? `${guest.countryCode} ${guest.phone}`
+                      : guest.phone || 'N/A'}
+                  </Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Document Type:</Text>
+                  <Text style={styles.detailValue}>
+                    {guest.documentType || 'N/A'}
+                  </Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Document Number:</Text>
+                  <Text style={styles.detailValue}>
+                    {guest.documentNumber || 'N/A'}
+                  </Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Address:</Text>
+                  <Text style={styles.detailValue}>
+                    {guest.address || 'N/A'}
+                  </Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>City:</Text>
+                  <Text style={styles.detailValue}>{guest.city || 'N/A'}</Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Country:</Text>
+                  <Text style={styles.detailValue}>
+                    {guest.country || 'N/A'}
+                  </Text>
+                </View>
+                <View style={styles.detailRow}>
+                  <Text style={styles.detailLabel}>Postal Code:</Text>
+                  <Text style={styles.detailValue}>
+                    {guest.postalCode || 'N/A'}
+                  </Text>
+                </View>
+              </>
+            )}
             <TouchableOpacity
               style={styles.editButton}
               onPress={() => handleEditGuest(index)}>

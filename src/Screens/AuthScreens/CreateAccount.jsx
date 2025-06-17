@@ -3,7 +3,7 @@ import {
   // ScrollView,
   View,
   // KeyboardAvoidingView,
-  // Platform,
+  Platform,
   StyleSheet,
   TouchableWithoutFeedback,
   Keyboard,
@@ -273,7 +273,6 @@ const CreateAccount = () => {
           exiting={FadeOut.duration(25)}
           style={{
             backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            height: Matrics.screenHeight,
             position: 'absolute',
             top: 0,
             left: 0,

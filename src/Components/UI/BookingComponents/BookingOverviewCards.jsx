@@ -17,7 +17,6 @@ const BookingOverviewCards = ({
       end={{x: 0, y: 1}}
       style={{
         width: Matrics.screenWidth * 0.43,
-        height: 150,
         borderRadius: 10,
         paddingVertical: Platform.OS === 'android' ? Matrics.vs(20) : 0,
         paddingHorizontal: Platform.OS === 'android' ? Matrics.vs(20) : 0,
@@ -50,7 +49,6 @@ const BookingOverviewCards = ({
           fontFamily: typography.fontFamily.Montserrat.Bold,
           fontSize: typography.fontSizes.fs30,
           marginLeft: Platform.OS === 'android' ? 0 : Matrics.vs(10),
-
         }}>
         {value}
       </Text>

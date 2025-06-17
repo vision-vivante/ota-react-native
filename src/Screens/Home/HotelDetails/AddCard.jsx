@@ -1,14 +1,15 @@
-import {View, Text, StyleSheet, Alert, TextInput} from 'react-native';
+import {View, Text, StyleSheet, Alert, TextInput, Platform} from 'react-native';
 import React, {useCallback, useState, useEffect} from 'react';
 import {useNavigation} from '@react-navigation/native';
 import KeyboardAwareScrollViewBoilerplate from '../../../Components/UI/KeyboardAwareScrollViewBoilerplate';
 import NormalHeader from '../../../Components/UI/NormalHeader';
-import {CardField, createPaymentMethod} from '@stripe/stripe-react-native';
+import {CardField, useStripe} from '@stripe/stripe-react-native';
 import {COLOR, Matrics, typography} from '../../../Config/AppStyling';
 import {useDispatch} from 'react-redux';
 import {saveCardThunk} from '../../../Redux/Reducers/BookingOverviewReducer/BookingListSlice';
 import {errorToast, success} from '../../../Helpers/ToastMessage';
 import InteractiveCard from '../../../Components/UI/InteractiveCard';
+import {SafeAreaView} from 'react-native-safe-area-context';
 
 const AddCard = () => {
   const navigation = useNavigation();
@@ -17,7 +18,7 @@ const AddCard = () => {
   const [cardDetails, setCardDetails] = useState(null);
   const [formComplete, setFormComplete] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-
+  const {createToken} = useStripe();
   const handleBackPress = () => {
     navigation.goBack();
   };
@@ -91,39 +92,36 @@ const AddCard = () => {
 
       console.log('Billing details:', billingDetails);
 
-      const {error, paymentMethod} = await createPaymentMethod({
-        paymentMethodType: 'Card',
-        paymentMethodData: {
-          billingDetails,
-        },
+      const {error, token} = await createToken({
+        type: 'Card',
+        name: cardDetails?.holderName,
+        currency: 'usd',
       });
-
-      console.log('createPaymentMethod response:', {error, paymentMethod});
-
+      console.log('Stripe token:', token);
+      console.log('Stripe error:', error);
       if (error) {
-        console.error('Payment method creation error:', error);
-        errorToast(error.message);
+        console.error('Stripe error:', error);
+        errorToast('Failed to create payment method. Please try again.');
         return;
       }
-
-      if (!paymentMethod) {
-        console.error('No payment method returned');
+      if (!token) {
+        console.error('No token returned');
         errorToast('Failed to create payment method');
         return;
       }
 
-      console.log('Payment method created successfully:', paymentMethod);
+      console.log('Payment method created successfully:', token);
 
       const details = {
-        cardToken: paymentMethod.id,
+        cardToken: token.id,
       };
 
       console.log('Sending to backend:', details);
 
-      const result = await dispatch(saveCardThunk({details}));
+      const resultAction = await dispatch(saveCardThunk({details}));
 
-      if (saveCardThunk.fulfilled.match(result)) {
-        const response = result.payload;
+      if (saveCardThunk.fulfilled.match(resultAction)) {
+        const response = resultAction.payload;
         if (response && response.status) {
           success('Card saved successfully!');
           navigation.navigate('HotelPaymentsPage');
@@ -147,9 +145,8 @@ const AddCard = () => {
       holderName: text,
     }));
   };
-
-  return (
-    <View style={styles.container}>
+  const renderContent = () => (
+    <View style={{flex: 1}}>
       <KeyboardAwareScrollViewBoilerplate
         headerComponent={
           <NormalHeader
@@ -200,6 +197,11 @@ const AddCard = () => {
         </View>
       </KeyboardAwareScrollViewBoilerplate>
     </View>
+  );
+  return Platform.OS === 'android' ? (
+    <SafeAreaView style={{flex: 1}}>{renderContent()}</SafeAreaView>
+  ) : (
+    <View style={styles.container}>{renderContent()}</View>
   );
 };
 

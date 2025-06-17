@@ -258,7 +258,10 @@ const BookingDetail = ({route}) => {
                   borderRadius: Matrics.s(10),
                 }}
               />
-              <BookingStatusTag status={bookingDetails?.Status} />
+              <BookingStatusTag
+                borderRadius={Matrics.vs(5)}
+                status={bookingDetails?.Status}
+              />
             </View>
           </View>
           <View

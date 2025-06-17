@@ -17,6 +17,10 @@ import Config from 'react-native-config';
 import {LoginManager, Profile, AccessToken} from 'react-native-fbsdk-next';
 import {errorToast} from '../../Helpers/ToastMessage';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Constants
+const GUEST_DETAILS_KEY = 'guestDetails';
 
 const initialState = {
   isLoading: false,
@@ -305,6 +309,10 @@ const authSlice = createSlice({
       state.userToken = null;
       state.isSuccess = false;
       removeToken();
+      // Clear guest details from AsyncStorage
+      AsyncStorage.removeItem(GUEST_DETAILS_KEY).catch(error => {
+        console.error('Error removing guest details:', error);
+      });
     },
   },
   extraReducers: builder => {

@@ -5,10 +5,13 @@ export const getDeviceLocation = createAsyncThunk(
   'deviceLocation/getDeviceLocation',
   async (_, {rejectWithValue}) => {
     try {
+      console.log('Requesting device location...');
+
       const location = await GetLocation.getCurrentPosition({
         enableHighAccuracy: false,
         timeout: 60000,
       });
+      console.log('Device Location:', location);
 
       return location;
     } catch (error) {
@@ -20,7 +23,7 @@ export const getDeviceLocation = createAsyncThunk(
 
 const initialState = {
   loadingLocation: false,
-  deviceLocation: '',
+  deviceLocation: null,
   errorMessage: '',
 };
 
@@ -32,16 +35,18 @@ const deviceLocationSlice = createSlice({
     builder
       .addCase(getDeviceLocation.pending, state => {
         state.loadingLocation = true;
-        state.deviceLocation = '';
+        state.deviceLocation = null;
+        state.errorMessage = '';
       })
       .addCase(getDeviceLocation.fulfilled, (state, action) => {
-        state.isLoading = false;
+        state.loadingLocation = false;
         state.deviceLocation = action.payload;
+        state.errorMessage = '';
       })
       .addCase(getDeviceLocation.rejected, (state, action) => {
         state.loadingLocation = false;
-        console.log(action.payload);
-        state.errorMessage = action.payload;
+        state.deviceLocation = null;
+        state.errorMessage = action.payload?.message || 'Unknown error';
       });
   },
 });

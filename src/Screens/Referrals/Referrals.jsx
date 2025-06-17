@@ -32,6 +32,7 @@ const Referrals = () => {
     state => state.referralList,
   );
   console.log('referralList', referralList);
+  const {userProfileData} = useSelector(state => state.userProfile);
 
   // Local state for filtering and UI
   const [currentFilter, setCurrentFilter] = useState('All');
@@ -49,9 +50,11 @@ const Referrals = () => {
 
   const getStatusStyle = status => {
     const baseStyle = {
-      paddingHorizontal: Matrics.s(5),
+      paddingHorizontal: Matrics.s(7),
       paddingVertical: Matrics.vs(4),
-      borderRadius: Matrics.s(12),
+      borderRadius: Matrics.s(5),
+      borderWidth: 1,
+      borderColor: '#F7BD59',
       alignSelf: 'flex-start',
     };
 
@@ -286,16 +289,16 @@ const Referrals = () => {
       <Text style={[styles.headerText, {width: 140, paddingLeft: 8}]}>
         Name
       </Text>
-      <Text style={[styles.headerText, {width: 160, paddingLeft: 8}]}>
+      <Text style={[styles.headerText, {width: 180, paddingLeft: 8}]}>
         Email
       </Text>
-      <Text style={[styles.headerText, {width: 120, paddingLeft: 8}]}>
+      {/* <Text style={[styles.headerText, {width: 120, paddingLeft: 8}]}>
         Phone No.
-      </Text>
+      </Text> */}
       <Text
         style={[
           styles.headerText,
-          {width: 120, textAlign: 'right', paddingRight: 8},
+          {width: 160, textAlign: 'right', paddingRight: 8},
         ]}>
         Cashback Earned
       </Text>
@@ -316,23 +319,23 @@ const Referrals = () => {
       <Text
         style={[styles.cellText, {width: 140, paddingLeft: 8}]}
         numberOfLines={2}>
-        {item?.referred_user_name || item?.name || 'N/A'}
+        {item?.user_Data?.name || item?.name || 'N/A'}
       </Text>
       <Text
-        style={[styles.cellText, {width: 160, paddingLeft: 8}]}
+        style={[styles.cellText, {width: 180, paddingLeft: 8}]}
         numberOfLines={2}>
-        {item?.referred_user_email || item?.email || 'N/A'}
+        {item?.user_Data?.email || item?.email || 'N/A'}
       </Text>
-      <Text
-        style={[styles.cellText, {width: 120, paddingLeft: 8}]}
-        numberOfLines={1}>
-        {item?.referred_user_phone || item?.phone || 'N/A'}
-      </Text>
+      {/* <Text
+          style={[styles.cellText, {width: 120, paddingLeft: 8}]}
+          numberOfLines={1}>
+          {item?.referred_user_phone || item?.phone || 'N/A'}
+        </Text> */}
       <Text
         style={[
           styles.cellText,
           styles.amountText,
-          {width: 120, textAlign: 'right', paddingRight: 8},
+          {width: 160, textAlign: 'right', paddingRight: 8},
         ]}>
         ${item?.amount || '0.00'}
       </Text>
@@ -379,7 +382,7 @@ const Referrals = () => {
 
   const handleCopyToClipboard = () => {
     Clipboard.setString(
-      'https://ota.visionvivante.in/signup?referralcode=MK2165',
+      `https://ota.visionvivante.in/signup?referralcode=${userProfileData?.my_referral_code}`,
     );
     success('Copied to clipboard');
   };
@@ -387,9 +390,8 @@ const Referrals = () => {
   const handleShare = async () => {
     try {
       const result = await Share.share({
-        message:
-          'Join OTA and get amazing travel deals! Use my referral link: https://ota.visionvivante.in/signup?referralcode=MK2165',
-        url: 'https://ota.visionvivante.in/signup?referralcode=MK2165',
+        message: `Join OTA and get amazing travel deals! Use my referral link: https://ota.visionvivante.in/signup?referralcode=${userProfileData?.my_referral_code}`,
+        url: `https://ota.visionvivante.in/signup?referralcode=${userProfileData?.my_referral_code}`,
         title: 'Join OTA - Your Travel Companion',
       });
 
@@ -423,7 +425,7 @@ const Referrals = () => {
 
         <View
           style={{
-            marginTop: Matrics.vs(10),
+            marginTop: Matrics.vs(16),
             paddingHorizontal: Matrics.s(6),
           }}>
           <View
@@ -434,6 +436,8 @@ const Referrals = () => {
               justifyContent: 'center',
               alignItems: 'center',
               paddingVertical: Matrics.vs(16),
+              width: '50%',
+              alignSelf: 'center',
             }}>
             <Image source={Images.WALLET} style={{width: 30, height: 30}} />
             <Text
@@ -455,6 +459,7 @@ const Referrals = () => {
             flexDirection: 'row',
             justifyContent: 'space-between',
             paddingHorizontal: Matrics.s(6),
+            marginTop: Matrics.vs(8),
           }}>
           <View
             style={{
@@ -656,6 +661,7 @@ const styles = StyleSheet.create({
     borderRadius: Matrics.s(8),
     marginLeft: 'auto',
     marginRight: Matrics.s(16),
+    marginTop: Matrics.vs(240),
     minWidth: Matrics.s(120),
     shadowColor: COLOR.BLACK,
     shadowOffset: {
@@ -695,8 +701,9 @@ const styles = StyleSheet.create({
   },
   tableHeader: {
     flexDirection: 'row',
-    paddingVertical: Matrics.vs(12),
+    paddingVertical: Matrics.vs(5),
     backgroundColor: COLOR.SMALL_CARD_BACKGROUND,
+    alignItems: 'center',
     width: 822, // Updated total width: 60+140+160+120+120+120+100 = 822
   },
   headerText: {
@@ -710,7 +717,7 @@ const styles = StyleSheet.create({
   },
   tableRow: {
     flexDirection: 'row',
-    paddingVertical: Matrics.vs(16),
+    paddingVertical: Matrics.vs(12),
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: COLOR.BORDER_COLOR,

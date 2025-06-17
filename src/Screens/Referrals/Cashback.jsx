@@ -296,7 +296,7 @@ const Cashback = () => {
         />
         <View
           style={{
-            marginTop: Matrics.vs(20),
+            marginTop: Matrics.vs(16),
             paddingHorizontal: Matrics.s(6),
           }}>
           <View
@@ -307,6 +307,8 @@ const Cashback = () => {
               justifyContent: 'center',
               alignItems: 'center',
               paddingVertical: Matrics.vs(16),
+              width: '50%',
+              alignSelf: 'center',
             }}>
             <Image source={Images.WALLET} style={{width: 30, height: 30}} />
             <Text
@@ -329,7 +331,7 @@ const Cashback = () => {
             alignItems: 'center',
             justifyContent: 'center',
             paddingHorizontal: Matrics.s(6),
-            marginTop: Matrics.vs(6),
+            marginTop: Matrics.vs(8),
           }}>
           <View
             style={{
@@ -488,7 +490,7 @@ const styles = StyleSheet.create({
   },
   amountText: {
     fontFamily: typography.fontFamily.Montserrat.Medium,
-    color: COLOR.WARNING,
+    color: '#F7BD59',
   },
   cashbackText: {
     fontFamily: typography.fontFamily.Montserrat.Medium,
@@ -544,6 +546,7 @@ const styles = StyleSheet.create({
     borderRadius: Matrics.s(8),
     marginLeft: 'auto',
     marginRight: Matrics.s(16),
+    marginTop: Matrics.vs(230),
     minWidth: Matrics.s(120),
     shadowColor: COLOR.BLACK,
     shadowOffset: {

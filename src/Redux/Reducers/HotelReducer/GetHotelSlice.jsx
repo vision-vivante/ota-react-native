@@ -1,16 +1,18 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit';
 import {getHotels} from '../../../Services/HotelService.js/GetHotelService';
-import reactotron from 'reactotron-react-native';
+import {getTopHotels} from '../../../Services/HotelService.js/TopHotels';
 
 const initialState = {
   hotels: [],
   loadingHotels: null,
+  topHotels: [],
+  topCities: [],
+  loadingTopHotels: null,
 };
 
 export const getAllHotelsThunk = createAsyncThunk(
   'hotels/getAllHotels',
   async ({details}, {rejectWithValue}) => {
-    reactotron.log('details', details);
     try {
       const response = await getHotels({
         details: details,
@@ -18,6 +20,22 @@ export const getAllHotelsThunk = createAsyncThunk(
       return response.result;
     } catch (error) {
       return rejectWithValue('Error getting hotels', error);
+    }
+  },
+);
+
+export const getTopHotelsThunk = createAsyncThunk(
+  'hotels/getTopHotels',
+  async ({details}, {rejectWithValue}) => {
+    try {
+      const response = await getTopHotels({
+        details: details,
+      });
+      console.log('response in top hotels thunk', response);
+
+      return response;
+    } catch (error) {
+      return rejectWithValue('Error getting top hotels', error);
     }
   },
 );
@@ -43,6 +61,20 @@ const hotelSlice = createSlice({
       .addCase(getAllHotelsThunk.rejected, (state, action) => {
         state.loadingHotels = false;
         console.log('Rejected hotel request', action.payload);
+      })
+      .addCase(getTopHotelsThunk.pending, state => {
+        state.loadingTopHotels = true;
+        state.topHotels = [];
+      })
+      .addCase(getTopHotelsThunk.fulfilled, (state, action) => {
+        console.log('Top hotels fetched successfully', action.payload);
+        state.loadingTopHotels = true;
+        state.topHotels = action.payload.topHotels;
+        state.topCities = action.payload.topCities;
+      })
+      .addCase(getTopHotelsThunk.rejected, (state, action) => {
+        state.loadingTopHotels = false;
+        console.log('Rejected top hotel request', action.payload);
       });
   },
 });

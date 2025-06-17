@@ -20,6 +20,7 @@ import {StripeProvider} from '@stripe/stripe-react-native';
 import {CardProvider} from './Context/CardDetailContext';
 import CustomStatusBar from './Components/UI/CustomStatusBar';
 import {PolicyInfoProvider} from './Context/PolicyInfoContext';
+import Config from 'react-native-config';
 
 const App = () => {
   return (
