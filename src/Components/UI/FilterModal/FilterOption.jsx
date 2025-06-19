@@ -80,6 +80,7 @@ const styles = StyleSheet.create({
     borderRadius: Matrics.s(8),
     paddingHorizontal: Matrics.s(5),
     paddingVertical: Matrics.vs(3),
+    width: Matrics.s(200),
   },
   filterStarImage: {
     width: Matrics.s(15),
@@ -90,5 +91,6 @@ const styles = StyleSheet.create({
     fontFamily: typography.fontFamily.Montserrat.Regular,
     fontSize: typography.fontSizes.fs12,
     color: COLOR.RED,
+    flexWrap: 'wrap',
   },
 });

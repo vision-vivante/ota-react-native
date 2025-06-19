@@ -12,7 +12,6 @@ const Amenities = () => {
     dispatch(getFacilitiesThunk());
   }, []);
   const {facilities} = useSelector(state => state.facilities);
-  console.log('Facilities from useSelector', facilities);
 
   const {selectedAmenities, setSelectedAmenities} = useContext(FilterContext);
   const handleStarPress = facility => {
@@ -25,33 +24,39 @@ const Amenities = () => {
     }
   };
   return (
-    <ScrollView
-      contentContainerStyle={{
-        flexDirection: 'row',
-        flexWrap: 'wrap',
-        gap: Matrics.s(10),
-        paddingHorizontal: Matrics.s(10),
-        paddingVertical: Matrics.vs(10),
-        marginTop: Matrics.vs(10),
-        //    paddingBottom: Matrics.vs(60),
+    <View
+      style={{
+        height: Matrics.screenHeight * 0.78,
       }}>
-      {/* <Text>Amenities</Text> */}
-      {facilities?.result?.map((facility, index) => {
-        return (
-          <View key={index}>
-            <FilterOption
-              title={facility}
-              icon={facility}
-              isAmenity={true}
-              handleStarPress={() => {
-                handleStarPress(facility);
-              }}
-              id={facility}
-            />
-          </View>
-        );
-      })}
-    </ScrollView>
+      <ScrollView
+        contentContainerStyle={{
+          // flexDirection: 'row',
+          flexWrap: 'wrap',
+          gap: Matrics.s(10),
+          paddingHorizontal: Matrics.s(10),
+          paddingVertical: Matrics.vs(10),
+          // minHeight: Matrics.screenHeight * 0.78,
+
+          //    paddingBottom: Matrics.vs(60),
+        }}>
+        {/* <Text>Amenities</Text> */}
+        {facilities?.result?.map((facility, index) => {
+          return (
+            <View key={index}>
+              <FilterOption
+                title={facility}
+                icon={facility}
+                isAmenity={true}
+                handleStarPress={() => {
+                  handleStarPress(facility);
+                }}
+                id={facility}
+              />
+            </View>
+          );
+        })}
+      </ScrollView>
+    </View>
   );
 };
 

@@ -1,4 +1,11 @@
-import React, {useContext, useEffect, useMemo, useState} from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   View,
   Text,
@@ -43,14 +50,27 @@ import {
   resetHotelState,
 } from '../../Redux/Reducers/HotelReducer/GetHotelSlice';
 import {HeaderOptionContext} from '../../Context/HeaderOptionContext';
-import {TouchableWithoutFeedback} from '@gorhom/bottom-sheet';
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+  BottomSheetScrollView,
+  BottomSheetView,
+  TouchableWithoutFeedback,
+} from '@gorhom/bottom-sheet';
 import TopHotelComponent from '../../Components/HotelComponents/TopHotelComponent';
 import TopCitiesComponent from '../../Components/HotelComponents/TopCitiesComponent';
+import PriceRangeSelector from '../../Components/UI/FilterModal/PriceRangeSelector';
+import MainFilterComponent from '../../Components/UI/FilterModal/MainFilterComponent';
 const Hotels = ({navigation}) => {
   const [activeTab, setActiveTab] = useState('Hotels');
   const {userProfileData} = useSelector(state => state.userProfile);
   const hotelDataS = useSelector(state => state.hotelSlice);
 
+  const bottomSheetModalRef = useRef(null);
+  const snapPoints = ['95%'];
+  const openBottomSheet = () => {
+    bottomSheetModalRef.current?.present();
+  };
   const {
     setShowFilterModal,
     showFilterModal,
@@ -130,8 +150,6 @@ const Hotels = ({navigation}) => {
   };
 
   const renderHotelCard = ({item}) => {
-    console.log('Item', item);
-
     return (
       <Pressable
         onPress={() =>
@@ -336,113 +354,118 @@ const Hotels = ({navigation}) => {
   };
   const renderContent = () => (
     <>
-      {showFilterModal && (
-        <Animated.View
-          entering={FadeIn.duration(250)}
-          exiting={FadeOut.duration(250)}
-          style={{
-            backgroundColor: 'rgba(0, 0, 0, 0.7)',
-            height: Matrics.screenHeight,
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            zIndex: 999,
-          }}
-        />
-      )}
+      <BottomSheetModalProvider>
+        {showFilterModal && (
+          <Animated.View
+            entering={FadeIn.duration(250)}
+            exiting={FadeOut.duration(250)}
+            style={{
+              backgroundColor: 'rgba(0, 0, 0, 0.7)',
+              height: Matrics.screenHeight,
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 999,
+            }}
+          />
+        )}
 
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setShowModal(false);
-            setShowCurrencyModal(false);
-          }}>
-          <>
-            <View>
-              <ImageBackground
-                source={Images.PROFILE_BACKGROUND}
-                imageStyle={styles.headerImageStyle}>
-                <View style={styles.homeHeaderUpperContainer}>
-                  <View>
-                    <Text style={styles.homeHeaderTitle}>
-                      {i18n.t('Hotel.hi')}{' '}
-                      {shortenTheName(userProfileData?.name)}
-                    </Text>
-                  </View>
-                  <View style={styles.homeHeaderSecondaryOptions}>
-                    <LanguageSelector />
-                    <CurrencySelector />
-                    {/* <View style={styles.secondaryOptions}>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          keyboardShouldPersistTaps="handled">
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setShowModal(false);
+              setShowCurrencyModal(false);
+            }}>
+            <>
+              <View>
+                <ImageBackground
+                  source={Images.PROFILE_BACKGROUND}
+                  imageStyle={styles.headerImageStyle}>
+                  <View style={styles.homeHeaderUpperContainer}>
+                    <View>
+                      <Text style={styles.homeHeaderTitle}>
+                        {i18n.t('Hotel.hi')}{' '}
+                        {shortenTheName(userProfileData?.name)}
+                      </Text>
+                    </View>
+                    <View style={styles.homeHeaderSecondaryOptions}>
+                      <LanguageSelector />
+                      <CurrencySelector />
+                      {/* <View style={styles.secondaryOptions}>
                       <Image
                         style={styles.secondaryOptionsImages}
                         source={Images.DOTS}
                       />
                     </View> */}
+                    </View>
                   </View>
-                </View>
-                <View>
-                  <Text style={styles.homeHeaderSubtitle}>
-                    {i18n.t('Hotel.bestService')}
+                  <View>
+                    <Text style={styles.homeHeaderSubtitle}>
+                      {i18n.t('Hotel.bestService')}
+                    </Text>
+                  </View>
+                  <View style={styles.homeTabContainer}>
+                    {renderTab(
+                      'Hotels',
+                      Images.HOTELS_ACTIVE,
+                      Images.HOTELS_INACTIVE,
+                    )}
+                    {renderTab(
+                      'Tours',
+                      Images.TOURS_ACTIVE,
+                      Images.TOURS_INACTIVE,
+                    )}
+                    {renderTab(
+                      'Flights',
+                      Images.FLIGHTS_ACTIVE,
+                      Images.FLIGHTS_INACTIVE,
+                    )}
+                    {renderTab('Car', Images.CARS_ACTIVE, Images.CARS_INACTIVE)}
+                  </View>
+                </ImageBackground>
+                {renderSearchCard()}
+              </View>
+              <View style={styles.filterSortContainer}>
+                <TouchableOpacity
+                  style={styles.filterSortItem}
+                  onPress={() => {
+                    try {
+                      bottomSheetModalRef.current?.present();
+                      console.log('Filter modal pressed');
+                    } catch (error) {
+                      console.error('Error in filter modal:', error);
+                    }
+                  }}
+                  disabled={filteredHotels?.length === 0}>
+                  {filteredHotels?.length > 0 ? (
+                    <Image
+                      source={Images.FILTER_ACTIVE}
+                      style={styles.filterImage}
+                    />
+                  ) : (
+                    <Image
+                      source={Images.FILTER_INACTIVE}
+                      style={styles.filterImage}
+                    />
+                  )}
+                  <Text
+                    style={[
+                      styles.filterSortText,
+                      {
+                        color:
+                          hotelDataS.hotels.length > 0
+                            ? COLOR.PRIMARY
+                            : COLOR.DARK_TEXT_COLOR,
+                      },
+                    ]}>
+                    {i18n.t('Hotel.filter')}
                   </Text>
-                </View>
-                <View style={styles.homeTabContainer}>
-                  {renderTab(
-                    'Hotels',
-                    Images.HOTELS_ACTIVE,
-                    Images.HOTELS_INACTIVE,
-                  )}
-                  {renderTab(
-                    'Tours',
-                    Images.TOURS_ACTIVE,
-                    Images.TOURS_INACTIVE,
-                  )}
-                  {renderTab(
-                    'Flights',
-                    Images.FLIGHTS_ACTIVE,
-                    Images.FLIGHTS_INACTIVE,
-                  )}
-                  {renderTab('Car', Images.CARS_ACTIVE, Images.CARS_INACTIVE)}
-                </View>
-              </ImageBackground>
-              {renderSearchCard()}
-            </View>
-            <View style={styles.filterSortContainer}>
-              <TouchableOpacity
-                style={styles.filterSortItem}
-                onPress={() => {
-                  setShowFilterModal(true);
-                  console.log('filtermodalPressed');
-                }}
-                disabled={filteredHotels.length === 0}>
-                {filteredHotels.length > 0 ? (
-                  <Image
-                    source={Images.FILTER_ACTIVE}
-                    style={styles.filterImage}
-                  />
-                ) : (
-                  <Image
-                    source={Images.FILTER_INACTIVE}
-                    style={styles.filterImage}
-                  />
-                )}
-                <Text
-                  style={[
-                    styles.filterSortText,
-                    {
-                      color:
-                        hotelDataS.hotels.length > 0
-                          ? COLOR.PRIMARY
-                          : COLOR.DARK_TEXT_COLOR,
-                    },
-                  ]}>
-                  {i18n.t('Hotel.filter')}
-                </Text>
-              </TouchableOpacity>
-              {/* <TouchableOpacity
+                </TouchableOpacity>
+                {/* <TouchableOpacity
               style={styles.filterSortItem}
               disabled={hotelDataS.hotels.length === 0}>
               {hotelDataS.hotels.length > 0 ? (
@@ -466,108 +489,55 @@ const Hotels = ({navigation}) => {
                 Sort
               </Text>
             </TouchableOpacity> */}
-            </View>
-            <View style={{height: Matrics.screenHeight}}>
-              <FlatList
-                data={activeTab === 'Hotels' ? filteredHotels : []}
-                renderItem={renderHotelCard}
-                keyExtractor={item => item.HotelID.toString()}
-                showsVerticalScrollIndicator={false}
-                nestedScrollEnabled={true}
-                ListEmptyComponent={
-                  hotelDataS.loadingHotels ? (
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        minHeight: 200,
-                      }}>
-                      <ActivityIndicator size="large" color={COLOR.PRIMARY} />
-                    </View>
-                  ) : (
-                    <View style={styles.emptyFlatListContainer}>
-                      <TopHotelComponent />
-                      <TopCitiesComponent />
-                    </View>
-                  )
-                }
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                windowSize={5}
-              />
-            </View>
-          </>
-        </TouchableWithoutFeedback>
-      </ScrollView>
+              </View>
+              <View style={{height: Matrics.screenHeight}}>
+                <FlatList
+                  data={activeTab === 'Hotels' ? filteredHotels : []}
+                  renderItem={renderHotelCard}
+                  keyExtractor={item => item.HotelID.toString()}
+                  showsVerticalScrollIndicator={false}
+                  nestedScrollEnabled={true}
+                  ListEmptyComponent={
+                    hotelDataS.loadingHotels ? (
+                      <View
+                        style={{
+                          flex: 1,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          minHeight: 200,
+                        }}>
+                        <ActivityIndicator size="large" color={COLOR.PRIMARY} />
+                      </View>
+                    ) : (
+                      <View style={styles.emptyFlatListContainer}>
+                        <TopHotelComponent />
+                        <TopCitiesComponent />
+                      </View>
+                    )
+                  }
+                  initialNumToRender={10}
+                  maxToRenderPerBatch={10}
+                  windowSize={5}
+                />
+              </View>
+            </>
+          </TouchableWithoutFeedback>
+        </ScrollView>
 
-      <View
-        style={{
-          width: Matrics.screenWidth * 0.95,
-          marginHorizontal: 'auto',
-          zIndex: 1001,
-        }}>
-        <BottomSheet
-          visible={showFilterModal}
-          onClose={() => setShowFilterModal(false)}>
-          <View>
-            <View style={styles.filterModalHeader}>
-              <Text style={styles.filterModalHeaderTitle}>Filter</Text>
-              <View style={{flexDirection: 'row', gap: 10}}>
-                {selectedAmenities?.length > 0 || selectedStars?.length > 0 ? (
-                  <>
-                    <Pressable
-                      onPress={() => {
-                        handleReset();
-                      }}>
-                      <Text style={styles.filterModalHeaderText}>Reset</Text>
-                    </Pressable>
-                    <Pressable onPress={() => handleDonePress()}>
-                      <Text style={styles.filterModalHeaderText}>Done</Text>
-                    </Pressable>
-                  </>
-                ) : (
-                  <>
-                    <Pressable onPress={() => handleDonePress()}>
-                      <Text style={styles.filterModalHeaderText}>Done</Text>
-                    </Pressable>
-                  </>
-                )}
-              </View>
-            </View>
-            <View>
-              <View
-                style={{
-                  borderBottomWidth: 1,
-                  borderBottomColor: COLOR.BORDER_COLOR,
-                  width: '95%',
-                  marginHorizontal: 'auto',
-                }}>
-                <Text style={styles.filterModalOptions}>Hotel Category</Text>
-                <Ratings />
-                {/* <Text>Heelo</Text> */}
-              </View>
-              <View
-                style={{
-                  width: '95%',
-                  marginHorizontal: 'auto',
-                  marginBottom: Matrics.vs(370),
-                }}>
-                <Text
-                  style={[
-                    styles.filterModalOptions,
-                    {
-                      marginTop: Matrics.vs(10),
-                    },
-                  ]}>
-                  Hotel Amenity
-                </Text>
-                <Amenities />
-              </View>
-            </View>
-          </View>
-        </BottomSheet>
-      </View>
+        <BottomSheetModal
+          style={{}}
+          ref={bottomSheetModalRef}
+          backgroundStyle={styles.bottomSheetBackground}
+          enableContentPanningGesture
+          enableHandlePanningGesture
+          // onClose={() => setShowFilterModal(false)}
+          index={0}
+          snapPoints={snapPoints}>
+          <BottomSheetView>
+            <MainFilterComponent />
+          </BottomSheetView>
+        </BottomSheetModal>
+      </BottomSheetModalProvider>
     </>
   );
   return Platform.OS === 'android' ? (
@@ -580,6 +550,12 @@ const Hotels = ({navigation}) => {
 export default Hotels;
 
 const styles = StyleSheet.create({
+  bottomSheetBackground: {
+    backgroundColor: COLOR.WHITE,
+    borderTopLeftRadius: Matrics.s(15),
+    borderTopRightRadius: Matrics.s(15),
+    boxShadow: '0px -2px 10px rgba(0, 0, 0, 0.15)',
+  },
   homeHeaderTitle: {
     fontFamily: typography.fontFamily.Montserrat.Bold,
     color: COLOR.WHITE,
@@ -658,7 +634,6 @@ const styles = StyleSheet.create({
   filterSortContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
-    // marginHorizontal: Matrics.s(10),
     margin: 'auto',
     marginVertical: Matrics.vs(10),
     width: Matrics.screenWidth * 0.7,
