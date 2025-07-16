@@ -84,7 +84,6 @@ const Booking = () => {
   );
   const renderItem = useCallback(
     ({item}) => {
-      console.log('item', item);
       return (
         <BookingControllerCard
           name={`${item?.Holder_details?.Name || ''} ${

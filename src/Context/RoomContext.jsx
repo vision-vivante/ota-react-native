@@ -27,7 +27,7 @@ export const RoomProvider = ({children}) => {
   const roomState = useSelector(state => state?.rooms);
   useEffect(() => {
     if (roomState?.rooms?.length > 0 && !selectedRoomId) {
-      console.log('inside');
+      console.log('inside', roomState);
       const firstRoom = roomState?.rooms[0];
       setSelectedRoomId(firstRoom.RatePlanID);
       setRatePlanId(firstRoom.RatePlanID);
@@ -46,7 +46,6 @@ export const RoomProvider = ({children}) => {
       }
     } else {
       setSelectedRoom(null);
-      console.log('Cleared selectedRoom');
     }
   }, [selectedRoomId, roomState?.rooms]);
 

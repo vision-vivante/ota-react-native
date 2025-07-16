@@ -19,11 +19,36 @@ const RoomPolicies = ({
   containerStyle,
 }) => {
   console.log('Room info', roomInfo);
+  console.log('Provider', provider);
+  console.log('hotelId', hotelId);
+  console.log('giataId', GiataId);
+
   const dispatch = useDispatch();
   const {selectedRoomId} = useContext(RoomContext);
-  const selectedRoom = roomInfo?.find(
-    room => room?.RatePlanID === selectedRoomId,
-  );
+  console.log('Selected Room Id', selectedRoomId);
+
+  const selectedRoom = roomInfo?.find(room => {
+    // If both are arrays
+    if (Array.isArray(room?.RatePlanID) && Array.isArray(selectedRoomId)) {
+      return selectedRoomId.every(id => room.RatePlanID.includes(id));
+    }
+    // If RatePlanID is an array and selectedRoomId is a string
+    if (Array.isArray(room?.RatePlanID) && typeof selectedRoomId === 'string') {
+      return room.RatePlanID.includes(selectedRoomId);
+    }
+    // If RatePlanID is a string and selectedRoomId is a string
+    if (
+      typeof room?.RatePlanID === 'string' &&
+      typeof selectedRoomId === 'string'
+    ) {
+      return room.RatePlanID === selectedRoomId;
+    }
+    // If RatePlanID is a string and selectedRoomId is an array
+    if (typeof room?.RatePlanID === 'string' && Array.isArray(selectedRoomId)) {
+      return selectedRoomId.includes(room.RatePlanID);
+    }
+    return false; // Fallback for unmatched cases
+  });
 
   const {ratePlanId} = useContext(RoomContext);
   const {hotelStayStartDate, hotelStayEndDate, adults, rooms, pluaralChild} =
@@ -54,6 +79,15 @@ const RoomPolicies = ({
     };
 
     try {
+      if (provider === 'RESTAL') {
+        navigation.navigate('HotelBooking', {
+          provider: provider,
+          hotelId: hotelId,
+          giataId: GiataId,
+        });
+        return;
+      }
+
       const response = await dispatch(
         confirmPrice({details: detailsForPriceConfirm}),
       ).unwrap();
@@ -135,13 +169,16 @@ const RoomPolicies = ({
               }}>
               {i18n.t('hotelDetails.amount')}
             </Text>
-            <Text
-              style={{
-                fontFamily: typography.fontFamily.Montserrat.Medium,
-                color: COLOR.PRIMARY,
-              }}>
-              ${selectedRoom?.RatePlanCancellationPolicyList[0]?.Amount}
-            </Text>
+
+            {selectedRoom?.RatePlanCancellationPolicyList !== null && (
+              <Text
+                style={{
+                  fontFamily: typography.fontFamily.Montserrat.Medium,
+                  color: COLOR.PRIMARY,
+                }}>
+                ${selectedRoom?.RatePlanCancellationPolicyList[0]?.Amount}
+              </Text>
+            )}
           </View>
         </View>
         {selectedRoomId && showProceedButton && (

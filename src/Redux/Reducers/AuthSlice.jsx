@@ -137,11 +137,10 @@ export const checkStoredToken = createAsyncThunk(
 
 export const googleLogin = createAsyncThunk(
   'auth/googleLogin',
-  async (_, {rejectWithValue}) => {
+  async (referralCode, {rejectWithValue}) => {
     try {
       await GoogleSignin.hasPlayServices();
       const googleResponse = await GoogleSignin.signIn();
-      console.log('Google response', googleResponse);
       if (googleResponse.type === 'cancelled') {
         return rejectWithValue('Google sign in cancelled by user');
       }
@@ -152,6 +151,7 @@ export const googleLogin = createAsyncThunk(
         google_id: googleId,
         name: googleName,
         email: googleEmail,
+        referral_code: referralCode,
       };
       console.log('Details', details);
       const response = await socialLogin({details: details});
@@ -261,7 +261,7 @@ export const sendOtpToBackendThunk = createAsyncThunk(
 
 export const appleLogin = createAsyncThunk(
   'auth/appleLogin',
-  async (_, {rejectWithValue}) => {
+  async (referralCode, {rejectWithValue}) => {
     try {
       // Request Apple authentication
       const appleAuthResponse = await appleAuth.performRequest({
@@ -283,7 +283,9 @@ export const appleLogin = createAsyncThunk(
           ? `${fullName.givenName} ${fullName.familyName}`.trim()
           : '',
         email: email || '',
+        referral_code: referralCode || '',
       };
+      console.log('Apple login details:', details);
 
       // Call your backend API with the Apple credentials
       const response = await socialLogin({details: details});

@@ -31,7 +31,6 @@ export const getTopHotelsThunk = createAsyncThunk(
       const response = await getTopHotels({
         details: details,
       });
-      console.log('response in top hotels thunk', response);
 
       return response;
     } catch (error) {

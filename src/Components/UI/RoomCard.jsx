@@ -42,7 +42,9 @@ const RoomCard = ({room}) => {
         />
       </View>
       <View style={styles.roomDetails}>
-        <Text style={styles.roomType}>{room.RatePlanName}</Text>
+        <Text style={styles.roomType}>
+          {room.RatePlanName || room.RoomName}
+        </Text>
         <View style={styles.amenitiesContainer}>
           {room.facility?.map((facility, index) => (
             <View key={index} style={styles.amenityItem}>

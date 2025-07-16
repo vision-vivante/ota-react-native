@@ -61,8 +61,6 @@ const StarRating = ({rating = 0, reviewCount = 0}) => {
 const HotelDetail = ({route, navigation}) => {
   const dispatch = useDispatch();
 
-
-  
   const {provider, hotelId, GiataId} = route.params;
   const {setProvider, setHotelId, setGiataId} = useContext(PolicyInfoContext);
   useEffect(() => {
@@ -79,24 +77,19 @@ const HotelDetail = ({route, navigation}) => {
   console.log('additionalDetails', additionalDetails);
 
   const images = [Images.HOTEL1, Images.HOTEL2, Images.HOTEL3];
-  const details = useMemo(
-    () =>
-      GiataId ? {GiataId: GiataId} : {provider: provider, HotelID: hotelId},
-    [GiataId, provider, hotelId],
-  );
-
   useEffect(() => {
     const fetchData = async () => {
+      const detailParams = GiataId
+        ? {GiataId: GiataId}
+        : {provider: provider, HotelID: hotelId};
       try {
-        // Fetch hotel details first
-        await dispatch(getHotelDetailsThunk({details})).unwrap();
+        await dispatch(getHotelDetailsThunk({details: detailParams})).unwrap();
       } catch (error) {
         console.error('Error in fetching hotel details:', error);
       }
     };
-
     fetchData();
-  }, [details]);
+  }, [GiataId, provider, hotelId, dispatch]);
   useEffect(() => {
     if (
       hotelDetail?.hotel?.Name &&
@@ -164,7 +157,6 @@ const HotelDetail = ({route, navigation}) => {
           showLeftButton={true}
           showRightButton={false}
           leftIconName="BACK_ROUND"
-          
         />
         <View>
           {hotelDetail?.loadingHotels ? (
@@ -219,7 +211,7 @@ const HotelDetail = ({route, navigation}) => {
                       fontFamily: typography.fontFamily.Montserrat.Medium,
                       fontSize: typography.fontSizes.fs14,
                     }}>
-                    {!hotelDetail?.hotel?.content?.section[0].para ? (
+                    {!hotelDetail?.hotel?.content?.section[0]?.para ? (
                       <>No Address Detail Available </>
                     ) : (
                       hotelDetail?.hotel?.content?.section[0].para

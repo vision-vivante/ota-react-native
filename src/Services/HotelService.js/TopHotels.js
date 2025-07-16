@@ -19,7 +19,6 @@ export const getTopHotels = async ({details}) => {
       details,
       config,
     );
-    console.log('response in top hotels service', response);
 
     return response.data;
   } catch (error) {

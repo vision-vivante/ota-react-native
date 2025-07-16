@@ -25,6 +25,8 @@ import {
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import CustomLoader from '../../Components/Loader/CustomLoader';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
+import ReferralModal from '../../Components/UI/ReferralModal';
+import {useReferralCode} from '../../Context/ReferralCodeContext';
 
 const Login = () => {
   const navigation = useNavigation();
@@ -34,7 +36,9 @@ const Login = () => {
   const AuthState = useSelector(state => state.auth);
 
   const dispatch = useDispatch();
-
+  const [showReferallCodeModal, setShowReferallCodeModal] =
+    React.useState(false);
+  const {setWhatTriggered} = useReferralCode();
   const handleAppleLogin = async () => {
     try {
       // Check if Apple Sign In is available
@@ -43,13 +47,15 @@ const Login = () => {
         console.log('Apple Sign In is not supported on this device');
         return;
       }
-
-      dispatch(appleLogin());
+      setWhatTriggered('apple');
     } catch (error) {
       console.log('Error initiating Apple login:', error);
     }
   };
-
+  const handleGoogleLogin = () => {
+    setShowReferallCodeModal(true);
+    setWhatTriggered('google');
+  };
   const renderContent = () => (
     <>
       {AuthState?.isLoading && (
@@ -112,7 +118,7 @@ const Login = () => {
             </View>
             <View style={styles.socailLoginContainer}>
               <TouchableOpacity
-                onPress={() => dispatch(googleLogin())}
+                onPress={() => handleGoogleLogin()}
                 activeOpacity={0.7}>
                 <Image style={styles.socialIcons} source={Images.GOOGLE} />
               </TouchableOpacity>
@@ -126,7 +132,7 @@ const Login = () => {
               </TouchableOpacity>
               {Platform.OS === 'ios' && (
                 <TouchableOpacity
-                  onPress={handleAppleLogin}
+                  onPress={() => handleAppleLogin()}
                   activeOpacity={0.7}>
                   <Image style={styles.socialIcons} source={Images.APPLE} />
                 </TouchableOpacity>
@@ -134,6 +140,12 @@ const Login = () => {
             </View>
           </View>
         </View>
+        {showReferallCodeModal && (
+          <ReferralModal
+            visible={showReferallCodeModal}
+            onClose={() => setShowReferallCodeModal(false)}
+          />
+        )}
       </ScrollView>
     </>
   );

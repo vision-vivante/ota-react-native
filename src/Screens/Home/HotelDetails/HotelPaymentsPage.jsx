@@ -173,7 +173,7 @@ const HotelPaymentsPage = () => {
                     fontSize: typography.fontSizes.fs11,
                     width: '60%',
                   }}>
-                  {selectedRoom.RoomOccupancy.RoomNum} Room
+                  {/* {selectedRoom.RoomOccupancy.RoomNum} Room */}
                 </Text>
               </View>
               <View style={{flexDirection: 'row', gap: 5}}>

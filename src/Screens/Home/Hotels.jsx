@@ -169,6 +169,7 @@ const Hotels = ({navigation}) => {
               giataId: item.GiataId,
             })
           }
+          provider={item.provider}
         />
       </Pressable>
     );

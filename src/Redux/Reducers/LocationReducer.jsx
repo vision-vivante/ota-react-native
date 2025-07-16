@@ -11,7 +11,6 @@ export const getDeviceLocation = createAsyncThunk(
         enableHighAccuracy: false,
         timeout: 60000,
       });
-      console.log('Device Location:', location);
 
       return location;
     } catch (error) {

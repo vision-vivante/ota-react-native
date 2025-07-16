@@ -304,7 +304,6 @@ const HotelSearchCard = () => {
   /* ------------------------- handle flastlist press ------------------------- */
   const handleFlatListPress = (cityName, index) => {
     console.log('[handleFlatListPress] Pressed city:', cityName);
-    // Dismiss keyboard and update state in a single operation
     Keyboard.dismiss();
     setSelectedCityIndex(index);
     setDestination(cityName);
@@ -732,7 +731,6 @@ const HotelSearchCard = () => {
                 }
                 placeholder={`Age needed for Child ${index + 1}`}
                 onOpen={() => {
-                  // Close other pickers when one is opened
                   setPickerStates(prevStates =>
                     prevStates.map((state, i) =>
                       i === index

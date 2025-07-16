@@ -71,7 +71,6 @@ export const initializeCurrency = () => async dispatch => {
 
     if (savedCurrency === null) {
       // No saved currency: use device-based currency (or USD if unmapped)
-      console.log('No saved currency, using device currency:', deviceCurrency);
       dispatch(setCurrency(deviceCurrency));
     } else {
       dispatch(setCurrency(savedCurrency));

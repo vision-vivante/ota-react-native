@@ -54,7 +54,7 @@ const AmenityItem = ({iconSource, name}) => {
 };
 
 // Main Hotel Card Component
-const HotelCard = ({hotel, icons, onBookPress}) => {
+const HotelCard = ({hotel, icons, onBookPress, provider}) => {
   const selectedCurrency = useSelector(
     state => state.currency.selectedCurrency,
   );
@@ -132,6 +132,19 @@ const HotelCard = ({hotel, icons, onBookPress}) => {
   return (
     <View style={styles.card}>
       <View style={styles.imageContainer}>
+        <Text
+          style={{
+            backgroundColor: 'red',
+            color: 'white',
+            position: 'absolute',
+            zIndex: 1,
+            left: 20,
+            top: 20,
+            padding: Matrics.vs(3),
+            borderRadius: Matrics.vs(5),
+          }}>
+          {provider}
+        </Text>
         <FastImage
           source={imageSource}
           style={styles.image}

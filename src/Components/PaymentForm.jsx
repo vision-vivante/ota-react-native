@@ -17,8 +17,10 @@ const PaymentForm = () => {
 
   const dispatch = useDispatch();
 
-  const {guests, hotelStayStartDate, hotelStayEndDate} =
+  const {guests, hotelStayStartDate, hotelStayEndDate, selectedRoom} =
     useContext(RoomContext);
+  console.log('Selected Room', selectedRoom);
+
   const GUEST_DETAILS_KEY = 'guestDetails';
   const [guestDetails, setGuestDetails] = useState(
     Array(guests)
@@ -109,6 +111,12 @@ const PaymentForm = () => {
         provider: 'DIDA',
         HotelID: priceConfirmAllState.priceConfirmDetails.HotelID,
         Currency: priceConfirmAllState.priceConfirmDetails.Currency,
+        roomDetail: [
+          {
+            RoomName: selectedRoom?.RoomName,
+            totalPrice: selectedRoom?.totalprice,
+          },
+        ],
       };
 
       console.log('Backend payload:', payload);

@@ -77,6 +77,7 @@ const SimilarHotels = () => {
               giataId: item.GiataId,
             })
           }
+          provider={item.provider}
         />
       </Pressable>
     );

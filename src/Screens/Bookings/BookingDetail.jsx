@@ -26,6 +26,8 @@ const BookingDetail = ({route}) => {
   console.log('bookingDetails', bookingDetails, loadingBookingDetails);
   const BASE_IMAGE_URL = 'https://giata.visionvivante.in/image?link=';
   const {booking_no, provider, booking_Id} = route.params;
+  console.log('Provider from params', provider);
+
   const isBookingCancelled =
     bookingDetails?.Status?.toString() === '3' ||
     bookingDetails?.Status?.toString() === '4';
@@ -33,9 +35,6 @@ const BookingDetail = ({route}) => {
   const dispatch = useDispatch();
   useEffect(() => {
     const fetchData = async () => {
-      console.log('booking_no', booking_no);
-      console.log('provider', provider);
-      console.log('booking_Id', booking_Id);
       try {
         await dispatch(
           getBookingDetailsThunk({
@@ -57,8 +56,13 @@ const BookingDetail = ({route}) => {
   }, []);
 
   const confirmCancelBooking = useCallback(() => {
-    dispatch(cancelBookingThunk({bookingNo: booking_Id, gds: provider}));
+    dispatch(cancelBookingThunk({bookingNo: booking_Id, provider: provider}));
+    setShowCancelModal(false);
   }, [booking_Id, provider, dispatch]);
+  const additionalDetails = useSelector(
+    state => state?.hotelDetail?.additionalDetails,
+  );
+
 
   // Show loading state when fetching booking details
   if (loadingBookingDetails) {
@@ -137,7 +141,8 @@ const BookingDetail = ({route}) => {
                   fontSize: typography.fontSizes.fs18,
                   marginBottom: Matrics.vs(10),
                 }}>
-                {bookingDetails?.Hotel_details?.Name}
+                {bookingDetails?.roomData?.[0]?.RoomName ||
+                  'Room Name Not Available'}
               </Text>
               <View
                 style={{
@@ -158,8 +163,8 @@ const BookingDetail = ({route}) => {
                   style={{
                     fontFamily: typography.fontFamily.Montserrat.Regular,
                   }}>
-                  {bookingDetails?.Hotel_details?.address
-                    ? bookingDetails?.Hotel_details?.address
+                  {additionalDetails?.address
+                    ? additionalDetails?.address
                     : 'No address available'}
                 </Text>
               </View>
@@ -233,17 +238,17 @@ const BookingDetail = ({route}) => {
                   title={'Download'}
                   invoicePath={bookingDetails?.invoicePath}
                 />
-                {!isBookingCancelled && (
+                {/* {!isBookingCancelled && (
                   <CancelBookingButton
                     cancelBooking={handleCancelBooking}
                     bookingId={booking_Id}
                     provider={provider}
                   />
-                )}
+                )} */}
               </View>
             </View>
             <View style={{gap: 10}}>
-              <Image
+              {/* <Image
                 source={
                   bookingDetails?.Hotel_details?.images?.[0]
                     ? {
@@ -257,7 +262,7 @@ const BookingDetail = ({route}) => {
                   resizeMode: 'cover',
                   borderRadius: Matrics.s(10),
                 }}
-              />
+              /> */}
               <BookingStatusTag
                 borderRadius={Matrics.vs(5)}
                 status={bookingDetails?.Status}
@@ -308,7 +313,9 @@ const BookingDetail = ({route}) => {
                     fontSize: typography.fontSizes.fs14,
                     color: COLOR.DIM_TEXT_COLOR,
                   }}>
-                  {personDetails?.Email?.toLocaleLowerCase()}
+                  {personDetails?.Email
+                    ? personDetails.Email.toLowerCase()
+                    : ''}
                 </Text>
                 <Text
                   style={{
@@ -369,9 +376,9 @@ const BookingDetail = ({route}) => {
                     color: COLOR.DARK_TEXT_COLOR,
                     fontFamily: typography.fontFamily.Montserrat.Regular,
                   }}>
-                  {bookingDetails?.roomData[0]?.RoomName
+                  {/* {bookingDetails?.roomData[0]?.RoomName
                     ? bookingDetails?.roomData[0]?.RoomName
-                    : bookingDetails?.roomData[0]?.RatePlanName}
+                    : bookingDetails?.roomData[0]?.RatePlanName} */}
                 </Text>
                 <Text
                   style={{
@@ -380,7 +387,7 @@ const BookingDetail = ({route}) => {
                     fontSize: typography.fontSizes.fs11,
                     width: '80%',
                   }}>
-                  {bookingDetails?.roomData[0]?.RoomOccupancy?.RoomNum} Room
+                  {/* {bookingDetails?.roomData[0]?.RoomOccupancy?.RoomNum} Room */}
                 </Text>
               </View>
               <View style={{flexDirection: 'row', gap: 5}}>

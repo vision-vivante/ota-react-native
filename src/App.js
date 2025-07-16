@@ -21,6 +21,9 @@ import {CardProvider} from './Context/CardDetailContext';
 import CustomStatusBar from './Components/UI/CustomStatusBar';
 import {PolicyInfoProvider} from './Context/PolicyInfoContext';
 import Config from 'react-native-config';
+import {NetworkProvider} from './Context/NetworkContext';
+import OfflineBanner from './Components/Loader/OfflineBanner';
+import {ReferralCodeProvider} from './Context/ReferralCodeContext';
 
 const App = () => {
   return (
@@ -31,20 +34,25 @@ const App = () => {
             <CustomStatusBar />
             <Provider store={Store}>
               <I18nextProvider i18n={i18n}>
-                <HeaderOptionProvider>
-                  <CardProvider>
-                    <ConfirmationModalProvider>
-                      <RoomProvider>
-                        <PolicyInfoProvider>
-                          <FilterProvider>
-                            <NavigationStack />
-                            <Toast config={toastConfig} autoHide={true} />
-                          </FilterProvider>
-                        </PolicyInfoProvider>
-                      </RoomProvider>
-                    </ConfirmationModalProvider>
-                  </CardProvider>
-                </HeaderOptionProvider>
+                <ReferralCodeProvider>
+                  <NetworkProvider>
+                    <HeaderOptionProvider>
+                      <CardProvider>
+                        <ConfirmationModalProvider>
+                          <RoomProvider>
+                            <PolicyInfoProvider>
+                              <FilterProvider>
+                                <OfflineBanner />
+                                <NavigationStack />
+                                <Toast config={toastConfig} autoHide={true} />
+                              </FilterProvider>
+                            </PolicyInfoProvider>
+                          </RoomProvider>
+                        </ConfirmationModalProvider>
+                      </CardProvider>
+                    </HeaderOptionProvider>
+                  </NetworkProvider>
+                </ReferralCodeProvider>
               </I18nextProvider>
             </Provider>
           </SafeAreaProvider>
