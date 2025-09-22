@@ -8,6 +8,9 @@ const initialState = {
   topHotels: [],
   topCities: [],
   loadingTopHotels: null,
+  setPage:'',
+  totalItems:'',
+  page:''
 };
 
 export const getAllHotelsThunk = createAsyncThunk(
@@ -17,7 +20,9 @@ export const getAllHotelsThunk = createAsyncThunk(
       const response = await getHotels({
         details: details,
       });
-      return response.result;
+      console.log('RESPONSE-0-0-0-0-0-0', response);
+      
+      return response;
     } catch (error) {
       return rejectWithValue('Error getting hotels', error);
     }
@@ -56,7 +61,8 @@ const hotelSlice = createSlice({
       })
       .addCase(getAllHotelsThunk.fulfilled, (state, action) => {
         state.loadingHotels = false;
-        state.hotels = action.payload;
+        state.hotels = action.payload.result;
+        state.totalItems = action.payload.total
       })
       .addCase(getAllHotelsThunk.rejected, (state, action) => {
         state.loadingHotels = false;

@@ -1,5 +1,5 @@
 // Change the path for additional details
-import React, {useContext, useEffect, useMemo} from 'react';
+import React, {useContext, useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -60,9 +60,8 @@ const StarRating = ({rating = 0, reviewCount = 0}) => {
 };
 const HotelDetail = ({route, navigation}) => {
   const dispatch = useDispatch();
-
-
-  
+  const [page, setPage] = useState(1);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const {provider, hotelId, GiataId} = route.params;
   const {setProvider, setHotelId, setGiataId} = useContext(PolicyInfoContext);
   useEffect(() => {
@@ -111,6 +110,38 @@ const HotelDetail = ({route, navigation}) => {
       dispatch(getAdditionalDetail({details: detailsForAdditionalDetails}));
     }
   }, [hotelDetail?.hotel, dispatch]);
+  const handleLoadMore = async () => {
+    if (!isLoadingMore && !roomState.loadingRooms) {
+      try {
+        setIsLoadingMore(true);
+        const nextPage = page + 1;
+        await dispatch(
+          getHotelDetailsThunk({
+            details: {
+              ...details,
+              page: nextPage,
+              limit: 5,
+            },
+          }),
+        );
+        setPage(nextPage);
+      } catch (error) {
+        console.error('Error loading more rooms:', error);
+      } finally {
+        setIsLoadingMore(false);
+      }
+    }
+  };
+
+  const ListFooterComponent = () => {
+    if (!isLoadingMore) return null;
+
+    return (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color={COLOR.PRIMARY} />
+      </View>
+    );
+  };
   const renderEmptyList = () => {
     return (
       <Text
@@ -164,7 +195,6 @@ const HotelDetail = ({route, navigation}) => {
           showLeftButton={true}
           showRightButton={false}
           leftIconName="BACK_ROUND"
-          
         />
         <View>
           {hotelDetail?.loadingHotels ? (
@@ -249,6 +279,9 @@ const HotelDetail = ({route, navigation}) => {
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={renderEmptyList}
                     ItemSeparatorComponent={() => <View style={{width: 20}} />}
+                    onEndReached={handleLoadMore}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={ListFooterComponent}
                   />
                 ) : (
                   <>

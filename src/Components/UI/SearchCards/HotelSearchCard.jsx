@@ -62,11 +62,13 @@ const HotelSearchCard = () => {
     showGuestsModal,
     setShowGuestsModal,
     pets,
+    page, setPage
   } = useContext(RoomContext);
 
   const {cityDetails, loadingCityDetails} = useSelector(state => state.getCity);
   const {loadingHotels} = useSelector(state => state?.hotelSlice);
   const [childAges, setChildAges] = useState([]);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   const globalLanguage = useSelector(
     state => state.selectedLanguage.globalLanguage,
@@ -208,26 +210,51 @@ const HotelSearchCard = () => {
   };
 
   const debouncedSearch = useCallback(
-    debounce(async searchText => {
-      if (searchText.length < 2) {
-        setShowFlatList(false);
-        return;
-      }
-      try {
-        setShowFlatList(true);
-        await dispatch(getCityDetailsThunk({cityName: searchText}));
-      } catch (error) {
-        console.error('Error getting hotel details', error);
-      }
-    }, 500),
-    [dispatch],
-  );
+  debounce(async searchText => {
+    if (searchText.length < 2) {
+      setShowFlatList(false);
+      return;
+    }
+    try {
+      setShowFlatList(true);
+      await dispatch(getCityDetailsThunk({
+        cityName: searchText,
+        page: 1, // Reset to page 1 for new searches
+        limit: 20
+      }));
+      setPage(1); // Reset page counter
+    } catch (error) {
+      console.error('Error getting hotel details', error);
+    }
+  }, 500),
+  [dispatch],
+);
+
 
   useEffect(() => {
     return () => {
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
+
+  const handleLoadMore = async () => {
+  if (!isLoadingMore && !loadingCityDetails) {
+    try {
+      setIsLoadingMore(true);
+      const nextPage = page + 1;
+      await dispatch(getCityDetailsThunk({
+        cityName: destination,
+        page: nextPage,
+        limit: 20
+      }));
+      setPage(nextPage);
+    } catch (error) {
+      console.error('Error loading more cities:', error);
+    } finally {
+      setIsLoadingMore(false);
+    }
+  }
+};
   /* --------------------------- handle search press --------------------------- */
   const handleSearchPress = async () => {
     if (
@@ -288,6 +315,8 @@ const HotelSearchCard = () => {
       },
       Nationality: 'IN',
       Currency: selectedCurrency ?? 'USD',
+      limit: 5,
+    page: 1,
     };
     await dispatch(getFacilitiesThunk());
     console.log('detailsForDestinationSearch', detailsForDestinationSearch);
@@ -363,13 +392,21 @@ const HotelSearchCard = () => {
                 showFlatList &&
                 cityDetails?.length > 0 && (
                   <FlatList
-                    data={cityDetails}
-                    style={styles.flatListStyle}
-                    keyExtractor={(item, index) => index.toString()}
-                    keyboardShouldPersistTaps="handled"
-                    nestedScrollEnabled={true}
-                    showsVerticalScrollIndicator={true}
-                    renderItem={({item, index}) => (
+  data={cityDetails}
+  style={styles.flatListStyle}
+  keyExtractor={(item, index) => index.toString()}
+  keyboardShouldPersistTaps="handled"
+  nestedScrollEnabled={true}
+  showsVerticalScrollIndicator={true}
+  onEndReachedThreshold={0.5}
+  ListFooterComponent={() => (
+    isLoadingMore ? (
+      <View style={styles.footerLoader}>
+        <ActivityIndicator size="small" color={COLOR.PRIMARY} />
+      </View>
+    ) : null
+  )}
+  renderItem={({item, index}) => (
                       <TouchableOpacity
                         style={styles.cityItem}
                         onPress={() =>
@@ -1124,6 +1161,10 @@ const datePickerStyles = StyleSheet.create({
   },
   selected_year_label: {
     color: COLOR.WHITE,
+  },
+   footerLoader: {
+    paddingVertical: Matrics.vs(20),
+    alignItems: 'center',
   },
 });
 

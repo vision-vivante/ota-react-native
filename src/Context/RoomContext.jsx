@@ -24,6 +24,7 @@ export const RoomProvider = ({children}) => {
   const [destination, setDestination] = useState('');
   const [selectedCityIndex, setSelectedCityIndex] = useState();
   const [showFlatList, setShowFlatList] = useState(false);
+  const [page, setPage] = useState(1);
   const roomState = useSelector(state => state?.rooms);
   useEffect(() => {
     if (roomState?.rooms?.length > 0 && !selectedRoomId) {
@@ -67,6 +68,7 @@ export const RoomProvider = ({children}) => {
         setHotelStayEndDate,
         showDatePicker,
         setShowDatePicker,
+        setPage,
         guests,
         setGuests,
         rooms,
@@ -76,6 +78,7 @@ export const RoomProvider = ({children}) => {
         pluaralChild,
         setChildren,
         pets,
+        page,
         setPets,
         showGuestsModal,
         setShowGuestsModal,

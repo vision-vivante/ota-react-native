@@ -46,10 +46,14 @@ import {HeaderOptionContext} from '../../Context/HeaderOptionContext';
 import {TouchableWithoutFeedback} from '@gorhom/bottom-sheet';
 import TopHotelComponent from '../../Components/HotelComponents/TopHotelComponent';
 import TopCitiesComponent from '../../Components/HotelComponents/TopCitiesComponent';
+import Pagination from '@cherry-soft/react-native-basic-pagination';
+
 const Hotels = ({navigation}) => {
   const [activeTab, setActiveTab] = useState('Hotels');
   const {userProfileData} = useSelector(state => state.userProfile);
   const hotelDataS = useSelector(state => state.hotelSlice);
+
+  console.log('HOTELDATAS=-------=-=-=-=-=-', hotelDataS);
 
   const {
     setShowFilterModal,
@@ -84,6 +88,8 @@ const Hotels = ({navigation}) => {
     pluaralChild,
     selectedCityIndex,
     destination,
+    setPage,
+    page,
   } = useContext(RoomContext);
   const dispatch = useDispatch();
   useEffect(() => {
@@ -94,6 +100,7 @@ const Hotels = ({navigation}) => {
       setFilteredHotels(hotelDataS.hotels);
     }
   }, [hotelDataS.hotels]);
+
   const icons = {
     fullStar: Images.FULL_STAR,
     halfStar: Images.HALF_STAR,
@@ -131,7 +138,6 @@ const Hotels = ({navigation}) => {
 
   const renderHotelCard = ({item}) => {
     console.log('Item', item);
-
     return (
       <Pressable
         onPress={() =>
@@ -139,6 +145,7 @@ const Hotels = ({navigation}) => {
             provider: item.provider,
             hotelId: item.HotelID,
             GiataId: item.GiataId,
+            placeId: item.place_id,
           })
         }>
         <HotelCard
@@ -212,6 +219,8 @@ const Hotels = ({navigation}) => {
     },
     Nationality: 'IN',
     Currency: selectedCurrency ?? 'INR',
+    limit: 5,
+    page: 1,
   };
   if (selectedStars && selectedStars.length > 0) {
     detailsForDestinationSearch.star_rating = selectedStars;
@@ -334,6 +343,16 @@ const Hotels = ({navigation}) => {
 
     return name;
   };
+
+  const handleLoadMore = async () => {
+    try {
+      const nextPage = page + 1;
+      console.log('NextPage=-=-=-=-=', nextPage);
+      setPage(nextPage);
+    } catch (error) {
+      console.error('Error loading more cities:', error);
+    }
+  };
   const renderContent = () => (
     <>
       {showFilterModal && (
@@ -368,6 +387,7 @@ const Hotels = ({navigation}) => {
                 imageStyle={styles.headerImageStyle}>
                 <View style={styles.homeHeaderUpperContainer}>
                   <View>
+                    
                     <Text style={styles.homeHeaderTitle}>
                       {i18n.t('Hotel.hi')}{' '}
                       {shortenTheName(userProfileData?.name)}
@@ -474,6 +494,16 @@ const Hotels = ({navigation}) => {
                 keyExtractor={item => item.HotelID.toString()}
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
+                ListFooterComponent={() => (
+                  <View >
+                      <Pagination
+                        totalItems={hotelDataS.totalItems}
+                        pageSize={10}
+                        currentPage={page}
+                        onPageChange={setPage}
+                      />
+                    </View>
+  )}
                 ListEmptyComponent={
                   hotelDataS.loadingHotels ? (
                     <View

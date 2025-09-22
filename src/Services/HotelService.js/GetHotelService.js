@@ -14,10 +14,13 @@ export const getHotels = async ({details}) => {
     },
     // timeout: API_TIMEOUT,
   };
+console.log('new derails ------', details);
 
   try {
     const response = await hotelBaseApiClient.post('/hotels', details, config);
+    console.log('RESPONSE+++++++________', response);
     return response.data;
+    
   } catch (error) {
     console.log(error);
 
