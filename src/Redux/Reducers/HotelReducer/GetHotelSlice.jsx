@@ -15,13 +15,20 @@ const initialState = {
 
 export const getAllHotelsThunk = createAsyncThunk(
   'hotels/getAllHotels',
-  async ({details}, {rejectWithValue}) => {
+  async ({ details }, { rejectWithValue }) => {
     try {
-      const response = await getHotels({
-        details: details,
-      });
+      const payload = {
+        details: {
+          ...details,
+          GiataID: details.GiataID ?? null,
+          provider: details.provider ?? null, 
+        },
+      };
+      console.log('PAYLOAD-====-=-=-=-=-=-=-=-=',payload)
+
+      const response = await getHotels(payload);
       console.log('RESPONSE-0-0-0-0-0-0', response);
-      
+
       return response;
     } catch (error) {
       return rejectWithValue('Error getting hotels', error);
@@ -31,11 +38,17 @@ export const getAllHotelsThunk = createAsyncThunk(
 
 export const getTopHotelsThunk = createAsyncThunk(
   'hotels/getTopHotels',
-  async ({details}, {rejectWithValue}) => {
+  async ({ details }, { rejectWithValue }) => {
     try {
-      const response = await getTopHotels({
-        details: details,
-      });
+      const payload = {
+        details: {
+          ...details,
+          GiataID: details.GiataID ?? null,
+          provider: details.provider ?? null,
+        },
+      };
+
+      const response = await getTopHotels(payload);
       console.log('response in top hotels thunk', response);
 
       return response;

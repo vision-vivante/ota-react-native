@@ -86,7 +86,6 @@ export const loginUserWithEmail = createAsyncThunk(
   'auth/loginWithEmail',
   async ({details, contentToken}, {rejectWithValue}) => {
     console.log('details', details);
-
     try {
       const response = await loginWithEmail({
         details: details,

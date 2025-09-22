@@ -23,6 +23,7 @@ import {SafeAreaView} from 'react-native-safe-area-context';
 import i18n from '../../i18n/i18n';
 import Animated, {FadeIn, FadeOut} from 'react-native-reanimated';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
+
 const LoginWithEmail = () => {
   const navigation = useNavigation();
   const [email, setEmail] = useState('');
@@ -33,10 +34,12 @@ const LoginWithEmail = () => {
   const globalLanguage = useSelector(
     state => state.selectedLanguage.globalLanguage,
   );
+
   const [errors, setErrors] = useState({
     email: '',
     password: '',
   });
+
   const validateEmail = value => {
     if (!value.trim()) {
       const error = i18n.t('validationMessages.noEmail');
@@ -49,6 +52,7 @@ const LoginWithEmail = () => {
     }
     return '';
   };
+
   const validatePassword = value => {
     if (!value) {
       const error = i18n.t('validationMessages.noPassword');
@@ -60,12 +64,14 @@ const LoginWithEmail = () => {
     }
     return '';
   };
+
   const handleEmailChange = value => {
     setEmail(value);
     console.log('errors', errors);
 
     setErrors(prev => ({...prev, email: validateEmail(value)}));
   };
+
   const handlePasswordChange = value => {
     setPassword(value);
     console.log('errors', errors);

@@ -47,6 +47,7 @@ import {TouchableWithoutFeedback} from '@gorhom/bottom-sheet';
 import TopHotelComponent from '../../Components/HotelComponents/TopHotelComponent';
 import TopCitiesComponent from '../../Components/HotelComponents/TopCitiesComponent';
 import Pagination from '@cherry-soft/react-native-basic-pagination';
+import CustomPagination from '../../Components/HotelComponents/CustomPagination';
 
 const Hotels = ({navigation}) => {
   const [activeTab, setActiveTab] = useState('Hotels');
@@ -219,12 +220,19 @@ const Hotels = ({navigation}) => {
     },
     Nationality: 'IN',
     Currency: selectedCurrency ?? 'INR',
-    limit: 5,
-    page: 1,
+    limit: 10,
+    page: page,
   };
   if (selectedStars && selectedStars.length > 0) {
     detailsForDestinationSearch.star_rating = selectedStars;
   }
+
+  useEffect(() => {
+    if (detailsForDestinationSearch.cityName) {
+      dispatch(getAllHotelsThunk({details: detailsForDestinationSearch}));
+    }
+  }, [page]);
+
   useEffect(() => {
     const refetchForCurrencyChange = async () => {
       // Only proceed if detailsForDestinationSearch exists
@@ -371,10 +379,7 @@ const Hotels = ({navigation}) => {
           }}
         />
       )}
-
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        keyboardShouldPersistTaps="handled">
+      <ScrollView>
         <TouchableWithoutFeedback
           onPress={() => {
             setShowModal(false);
@@ -387,7 +392,6 @@ const Hotels = ({navigation}) => {
                 imageStyle={styles.headerImageStyle}>
                 <View style={styles.homeHeaderUpperContainer}>
                   <View>
-                    
                     <Text style={styles.homeHeaderTitle}>
                       {i18n.t('Hotel.hi')}{' '}
                       {shortenTheName(userProfileData?.name)}
@@ -495,15 +499,23 @@ const Hotels = ({navigation}) => {
                 showsVerticalScrollIndicator={false}
                 nestedScrollEnabled={true}
                 ListFooterComponent={() => (
-                  <View >
-                      <Pagination
-                        totalItems={hotelDataS.totalItems}
-                        pageSize={10}
-                        currentPage={page}
-                        onPageChange={setPage}
-                      />
-                    </View>
-  )}
+                  <View style={styles.paginationContainer}>
+                    <CustomPagination
+                      totalItems={hotelDataS.totalItems}
+                      pageSize={10}
+                      currentPage={page}
+                      onPageChange={newPage => setPage(newPage)}
+                    />
+                    {/* <Pagination
+                      totalItems={hotelDataS.totalItems}
+                      pageSize={10}
+                      currentPage={page}
+                      onPageChange={newPage => setPage(newPage)}
+                      btnStyle='#6d338a'
+                      inactiveTextColor="#333"
+                    /> */}
+                  </View>
+                )}
                 ListEmptyComponent={
                   hotelDataS.loadingHotels ? (
                     <View
@@ -528,9 +540,8 @@ const Hotels = ({navigation}) => {
               />
             </View>
           </>
-        </TouchableWithoutFeedback>
-      </ScrollView>
-
+        </TouchableWithoutFeedback> 
+</ScrollView>
       <View
         style={{
           width: Matrics.screenWidth * 0.95,
@@ -746,5 +757,13 @@ const styles = StyleSheet.create({
   emptyFlatListSubText: {
     fontFamily: typography.fontFamily.Montserrat.Regular,
     color: COLOR.DIM_TEXT_COLOR,
+  },
+  paginationContainer: {
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff', // keep it fixed
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
   },
 });
