@@ -155,6 +155,8 @@ const LoginWithPhone = () => {
           text1: i18n.t('Toast.otpSentSuccess'),
         });
       } else if (response?.payload?.status === 'error') {
+        console.log('Response', response);
+        
         errorToast(response?.payload?.message);
       } else if (response?.error) {
         errorToast('Phone No. does not exist');

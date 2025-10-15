@@ -10,6 +10,8 @@ import {errorToast} from '../../../Helpers/ToastMessage';
 import {useNavigation} from '@react-navigation/native';
 import i18n from '../../../i18n/i18n';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AuthenticationModal from '../../../Components/AuthenticationModal';
+import {saveHotelDetails} from '../../../Utils/GuestBookingFlowFunctions';
 
 const RoomPolicies = ({
   roomInfo,
@@ -35,8 +37,13 @@ const RoomPolicies = ({
   const navigation = useNavigation();
   const handleCheckoutPress = async () => {
     if (!authData) {
-      await AsyncStorage.setItem('ActiveHotelId', hotelId.toString());
+      try {
+        await saveHotelDetails({hotelId: hotelId, giataId: GiataId, provider});
+      } catch (error) {
+        console.log('Error storing hotel ID:', error);
+      }
       setShowLoginModal(true);
+      return;
     }
 
     if (!hotelStayStartDate || !hotelStayEndDate) {
@@ -158,6 +165,18 @@ const RoomPolicies = ({
           </View>
         )}
       </View>
+      <AuthenticationModal
+        visible={showLoginModal}
+        onCancelPress={() => setShowLoginModal(false)}
+        onCreateAccountPress={() => {
+          setShowLoginModal(false);
+          navigation.navigate('CreateAccount');
+        }}
+        onLoginPress={() => {
+          setShowLoginModal(false);
+          navigation.navigate('Login');
+        }}
+      />
     </View>
   );
 };

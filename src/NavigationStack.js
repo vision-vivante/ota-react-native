@@ -34,6 +34,7 @@ import {getCurrencyThunk} from './Redux/Reducers/CurrencyReducer';
 import i18n from './i18n/i18n';
 import ReferralStack from './Screens/Referrals';
 import ChangePassword from './Screens/Profile/ChangePassword';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Define Stacks
 const Stack = createNativeStackNavigator();
@@ -202,7 +203,11 @@ const NavigationStack = () => {
   console.log('Auth data', authData);
 
   // Helper function to determine which screen to show initially
-  const renderInitialScreen = () => {
+  const renderInitialScreen = async () => {
+    const hotelActiveDetails = await AsyncStorage.getItem('ActiveHotelDetails');
+    const parsedHotelActiveDetails = JSON.parse(hotelActiveDetails);
+    console.log('Hotel active details in nav stack', parsedHotelActiveDetails);
+
     if (!userToken) {
       return <Stack.Screen name="AuthStack" component={AuthStack} />;
     }

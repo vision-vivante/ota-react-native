@@ -82,6 +82,7 @@ export const loginUserWithEmail = createAsyncThunk(
         details: details,
         contentToken: contentToken,
       });
+
       console.log('response of login email', response);
 
       return response.data;
@@ -342,7 +343,6 @@ const authSlice = createSlice({
       })
       .addCase(loginUserWithEmail.rejected, (state, action) => {
         console.log('Reject login with email', action.payload);
-
         state.isLoading = false;
         state.isError = true;
         state.errorMessage = action.payload;

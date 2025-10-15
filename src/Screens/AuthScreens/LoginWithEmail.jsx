@@ -119,7 +119,9 @@ const LoginWithEmail = () => {
         }),
       );
       if (response?.error?.message === 'Rejected') {
-        errorToast(response?.payload?.message || response?.payload?.error);
+        console.log('Response', response);
+
+        errorToast(response?.payload?.message || response?.payload?.errors);
       }
     } catch (error) {
       console.log('Error', 'login in account', error);
