@@ -31,6 +31,7 @@ import GuestForm from '../../../Components/GuestForm';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {errorToast} from '../../../Helpers/ToastMessage';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import {useSelector} from 'react-redux';
 
 const GUEST_DETAILS_KEY = 'guestDetails';
 // GuestForm Component for Bottom Sheet
@@ -39,6 +40,8 @@ const GUEST_DETAILS_KEY = 'guestDetails';
 const HotelBooking = () => {
   const navigation = useNavigation();
   const {guests} = useContext(RoomContext);
+  const {authData} = useSelector(state => state.auth);
+
   const bottomSheetModalRef = useRef(null);
   const snapPoints = useCallback(() => ['50%', '80%'], []);
   const [guestDetails, setGuestDetails] = useState(

@@ -9,14 +9,16 @@ export const getHotelDetails = async ({details}) => {
 
   const config = {
     headers: {
-      'x-access-token': authToken,
+      'x-access-token': authToken ? `${authToken}` : 'null',
       'Content-Token': contentToken,
+      referer: 'https://arabgcc.com',
+      origin: 'https://arabgcc.com',
     },
   };
 
   try {
     const response = await hotelBaseApiClient.post(
-      '/Hotel-Details',
+      'Hotel-Details',
       details,
       config,
     );

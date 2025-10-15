@@ -9,6 +9,7 @@ import {confirmPrice} from '../../../Redux/Reducers/HotelReducer/PriceConfirmSli
 import {errorToast} from '../../../Helpers/ToastMessage';
 import {useNavigation} from '@react-navigation/native';
 import i18n from '../../../i18n/i18n';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const RoomPolicies = ({
   roomInfo,
@@ -18,7 +19,9 @@ const RoomPolicies = ({
   showProceedButton = true,
   containerStyle,
 }) => {
-  console.log('Room info', roomInfo);
+  const {authData} = useSelector(state => state.auth);
+  const [showLoginModal, setShowLoginModal] = React.useState(false);
+
   const dispatch = useDispatch();
   const {selectedRoomId} = useContext(RoomContext);
   const selectedRoom = roomInfo?.find(
@@ -31,6 +34,11 @@ const RoomPolicies = ({
 
   const navigation = useNavigation();
   const handleCheckoutPress = async () => {
+    if (!authData) {
+      await AsyncStorage.setItem('ActiveHotelId', hotelId.toString());
+      setShowLoginModal(true);
+    }
+
     if (!hotelStayStartDate || !hotelStayEndDate) {
       const error = 'Please select check-in and check-out dates';
       return errorToast(error);
@@ -140,7 +148,7 @@ const RoomPolicies = ({
                 fontFamily: typography.fontFamily.Montserrat.Medium,
                 color: COLOR.PRIMARY,
               }}>
-              ${selectedRoom?.RatePlanCancellationPolicyList[0]?.Amount}
+              {selectedRoom?.RatePlanCancellationPolicyList[0]?.amount}
             </Text>
           </View>
         </View>

@@ -1,16 +1,39 @@
 // Splash.js
 import React, {useEffect} from 'react';
-import {View, StyleSheet, Image, SafeAreaView, I18nManager, Platform} from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Image,
+  SafeAreaView,
+  I18nManager,
+  Platform,
+} from 'react-native';
 import Images from './Config/Images';
 import colors from './Config/AppStyling/colors';
 import {Matrics} from './Config/AppStyling';
 import FastImage from 'react-native-fast-image';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {getUniversalToken} from './Redux/Reducers/ContentTokenSlice';
 
 const Splash = () => {
   const globalLanguage = useSelector(
     state => state.selectedLanguage.globalLanguage,
   );
+  const dispatch = useDispatch();
+  // useEffect for getting content token
+  useEffect(() => {
+    const getUniversalTokenFromServer = async () => {
+      await dispatch(getUniversalToken())
+        .then(result => {
+          console.log('Dispatch result:', result);
+        })
+        .catch(error => {
+          console.error('Dispatch error:', error);
+        });
+    };
+
+    getUniversalTokenFromServer();
+  }, []);
 
   useEffect(() => {
     // Force LTR layout for splash screen

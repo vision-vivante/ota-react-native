@@ -2,25 +2,31 @@ import {Store} from '../../Redux/store';
 import hotelBaseApiClient from './HotelBaseApiClient';
 
 export const getTopHotels = async ({details}) => {
-  const state = Store.getState();
-  const authToken = state.auth.userToken;
-  const contentToken = state.contentToken.universalToken;
+  console.log('🔍 Request details:', details);
 
-  const config = {
-    headers: {
-      'x-access-token': authToken,
-      'Content-Token': contentToken,
-    },
+  const state = Store.getState();
+  const contentToken = state?.contentToken?.universalToken;
+console.log('Content token', contentToken);
+
+  if (!contentToken) {
+    console.warn('⚠️ No content token found in Redux state.');
+    throw new Error('Missing content token');
+  }
+
+  const headers = {
+    'x-access-token': 'null', // Required as literal string
+    'content-token': contentToken,
+    referer: 'https://arabgcc.com/',
+    origin: 'https://arabgcc.com/',
   };
 
   try {
     const response = await hotelBaseApiClient.post(
-      '/home-content',
+      'home-content',
       details,
-      config,
+      { headers }
     );
-    console.log('response in top hotels service', response);
-
+    console.log('✅ API response:', response.data);
     return response.data;
   } catch (error) {
     const errorMessage = error.response?.data?.message || error.message;

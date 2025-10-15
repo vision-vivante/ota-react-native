@@ -8,13 +8,15 @@ export const modifyRooms = async ({details}) => {
 
   const config = {
     headers: {
-      'x-access-token': authToken,
+      'x-access-token': authToken ? `${authToken}` : 'null',
       'Content-Token': contentToken,
+      referer: 'https://arabgcc.com',
+      origin: 'https://arabgcc.com',
     },
   };
 
   try {
-    const response = await hotelBaseApiClient.post('/rooms', details, config);
+    const response = await hotelBaseApiClient.post('rooms', details, config);
     console.log('response in rooms service', response);
 
     return response.data;

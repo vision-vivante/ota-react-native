@@ -1,7 +1,8 @@
 import axios from 'axios';
+import Config from 'react-native-config';
 
 const hotelBaseApiClient = axios.create({
-  baseURL: 'https://gds.visionvivante.in',
+  baseURL: Config.REACT_APP_OTA_GDS_URL,
   headers: {
     'Content-Type': 'application/json',
   },

@@ -11,6 +11,7 @@ export const getCityDetails = ({cityName}) => {
       }
     }
   `;
+  console.log('City name being serached', cityName);
 
   const variables = {
     name: cityName,

@@ -9,6 +9,7 @@ import {
   StyleSheet,
   Image,
   FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import {useDispatch, useSelector} from 'react-redux';
 import {

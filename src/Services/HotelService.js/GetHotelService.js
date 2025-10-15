@@ -9,18 +9,19 @@ export const getHotels = async ({details}) => {
   const contentToken = state.contentToken.universalToken;
   const config = {
     headers: {
-      'x-access-token': authToken,
+      'x-access-token': authToken ? `${authToken}` : 'null',
       'Content-Token': contentToken,
+      referer: 'https://arabgcc.com',
+      origin: 'https://arabgcc.com',
     },
     // timeout: API_TIMEOUT,
   };
-console.log('new derails ------', details);
+  console.log('new derails ------', details);
 
   try {
-    const response = await hotelBaseApiClient.post('/hotels', details, config);
+    const response = await hotelBaseApiClient.post('hotels', details, config);
     console.log('RESPONSE+++++++________', response);
     return response.data;
-    
   } catch (error) {
     console.log(error);
 

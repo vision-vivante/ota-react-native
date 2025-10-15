@@ -38,7 +38,7 @@ const confirmPriceSlice = createSlice({
         if (action?.payload?.status === true) {
           console.log('Inside true');
 
-          console.log('Before state update:', state); // Log the state before updating
+          console.log('Before state update:', state);
           state.priceConfirmDetails = action.payload.result;
           console.log('After state update:', state);
         } else if (action?.payload?.status === false) {

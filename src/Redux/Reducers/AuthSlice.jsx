@@ -1,23 +1,20 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
 import {
   createAccount,
-  forgotPassword,
   forgotPasswordSer,
   loginWithEmail,
   loginWithPhone,
   sendOtptobackend,
   socialLogin,
 } from '../../Services/AuthServices';
-import * as Keychain from 'react-native-keychain';
-import {
-  GoogleSignin,
-  statusCodes,
-} from '@react-native-google-signin/google-signin';
-import Config from 'react-native-config';
+import {GoogleSignin} from '@react-native-google-signin/google-signin';
 import {LoginManager, Profile, AccessToken} from 'react-native-fbsdk-next';
-import {errorToast} from '../../Helpers/ToastMessage';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {clearUniversalToken} from './ContentTokenSlice';
+
+const TOKEN_KEY = 'auth_token';
+const USER_DATA_KEY = 'user_data';
 
 // Constants
 const GUEST_DETAILS_KEY = 'guestDetails';
@@ -35,10 +32,8 @@ console.log('Islogin', initialState.isLoading);
 
 const saveToken = async token => {
   try {
-    // Store the token securely
-    await Keychain.setGenericPassword('auth_token', token, {
-      service: 'auth_service',
-    });
+    await AsyncStorage.setItem(TOKEN_KEY, token);
+    console.log('Token saved successfully');
   } catch (error) {
     console.error('Error saving token:', error);
   }
@@ -46,10 +41,8 @@ const saveToken = async token => {
 
 const getToken = async () => {
   try {
-    const credentials = await Keychain.getGenericPassword({
-      service: 'auth_service',
-    });
-    return credentials ? credentials.password : null;
+    const token = await AsyncStorage.getItem(TOKEN_KEY);
+    return token;
   } catch (error) {
     console.error('Error getting token:', error);
     return null;
@@ -58,10 +51,8 @@ const getToken = async () => {
 
 const removeToken = async () => {
   try {
-    await Keychain.resetGenericPassword({
-      service: 'auth_service',
-    });
-    console.log('token removed successfully');
+    await AsyncStorage.removeItem(TOKEN_KEY);
+    console.log('Token removed successfully');
   } catch (error) {
     console.error('Error removing token:', error);
   }
@@ -308,6 +299,7 @@ const authSlice = createSlice({
       state.userToken = null;
       state.isSuccess = false;
       removeToken();
+      clearUniversalToken();
       // Clear guest details from AsyncStorage
       AsyncStorage.removeItem(GUEST_DETAILS_KEY).catch(error => {
         console.error('Error removing guest details:', error);

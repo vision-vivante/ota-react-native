@@ -1,9 +1,11 @@
 import axios from 'axios';
 import {Store} from '../Redux/store';
 import {logout} from '../Redux/Reducers/AuthSlice';
+import Config from 'react-native-config';
+console.log('COnfig.AReac', Config.REACT_APP_OTA_URL);
 
 const baseApiClient = axios.create({
-  baseURL: 'https://otaapi.visionvivante.in',
+  baseURL: Config.REACT_APP_OTA_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,16 +14,11 @@ const baseApiClient = axios.create({
 baseApiClient.interceptors.request.use(
   async config => {
     const state = Store.getState();
-    const authToken = state.auth.userToken;
+    const authToken = state?.auth?.userToken;
     const contentToken = state.contentToken.universalToken;
 
-    if (authToken) {
-      config.headers['x-access-token'] = `${authToken}`;
-    }
-
-    if (contentToken) {
-      config.headers['Content-Token'] = contentToken;
-    }
+    config.headers['x-access-token'] = `${authToken}` ? `${authToken}` : 'null';
+    config.headers['Content-Token'] = contentToken;
     console.log('config', config);
 
     return config;

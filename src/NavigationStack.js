@@ -46,6 +46,7 @@ const Tab = createBottomTabNavigator({
 
 // Auth Screens
 const AuthRoutes = {
+  Home: HomeStack,
   Login,
   CheckEmail,
   CreateAccount,
@@ -198,6 +199,7 @@ const NavigationStack = () => {
   const dispatch = useDispatch();
   const {userToken, authData} = useSelector(state => state.auth);
   const [isSplashVisible, setSplashVisible] = useState(true);
+  console.log('Auth data', authData);
 
   // Helper function to determine which screen to show initially
   const renderInitialScreen = () => {
@@ -217,6 +219,8 @@ const NavigationStack = () => {
     const initializeApp = async () => {
       const splashDelay = new Promise(resolve => setTimeout(resolve, 5000));
       const {payload} = await dispatch(checkUniversalToken());
+      console.log('Payload content token', payload);
+
       await dispatch(checkStoredToken());
       if (!payload.token) {
         console.log('No token found, getting new token');

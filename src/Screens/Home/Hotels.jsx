@@ -52,9 +52,11 @@ import CustomPagination from '../../Components/HotelComponents/CustomPagination'
 const Hotels = ({navigation}) => {
   const [activeTab, setActiveTab] = useState('Hotels');
   const {userProfileData} = useSelector(state => state.userProfile);
+  console.log('UserProfileData', userProfileData);
+
   const hotelDataS = useSelector(state => state.hotelSlice);
 
-  console.log('HOTELDATAS=-------=-=-=-=-=-', hotelDataS);
+  // console.log('HOTELDATAS=-------=-=-=-=-=-', hotelDataS);
 
   const {
     setShowFilterModal,
@@ -78,6 +80,10 @@ const Hotels = ({navigation}) => {
   const getCity = useSelector(state => state.getCity);
   const cityDetails = useMemo(() => getCity.cityDetails, [getCity.cityDetails]);
   useEffect(() => {
+    if (!userToken) {
+      console.log('User is guest');
+      return;
+    }
     dispatch(getUserProfileData({userToken, contentToken}));
   }, []);
 
@@ -394,7 +400,9 @@ const Hotels = ({navigation}) => {
                   <View>
                     <Text style={styles.homeHeaderTitle}>
                       {i18n.t('Hotel.hi')}{' '}
-                      {shortenTheName(userProfileData?.name)}
+                      {userProfileData?.name
+                        ? shortenTheName(userProfileData?.name)
+                        : 'Guest'}
                     </Text>
                   </View>
                   <View style={styles.homeHeaderSecondaryOptions}>
@@ -540,8 +548,8 @@ const Hotels = ({navigation}) => {
               />
             </View>
           </>
-        </TouchableWithoutFeedback> 
-</ScrollView>
+        </TouchableWithoutFeedback>
+      </ScrollView>
       <View
         style={{
           width: Matrics.screenWidth * 0.95,

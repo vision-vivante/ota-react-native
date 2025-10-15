@@ -1,9 +1,10 @@
 import axios from 'axios';
 import {Store} from '../../Redux/store';
 import {logout} from '../../Redux/Reducers/AuthSlice';
+import Config from 'react-native-config';
 
 const baseApiClientgql = axios.create({
-  baseURL: 'https://gds.visionvivante.in/graphql',
+  baseURL: `${Config.REACT_APP_OTA_GDS_URL}graphql`,
   headers: {
     'Content-Type': 'application/json',
   },

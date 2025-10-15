@@ -63,7 +63,7 @@ const CreateAccount = () => {
       const error = i18n.t('validationMessages.noName');
       return error;
     }
-    if (value.length < 2) {
+    if (value.length < 3) {
       const error = i18n.t('validationMessages.shortName');
       return error;
     }
@@ -224,7 +224,7 @@ const CreateAccount = () => {
         referral_code: referalCode,
         country_code: countryCode,
         country_code_name: countryCodeName,
-        username: name,
+        // username: name,
         role: 'user',
       };
       let currentToken = token;
