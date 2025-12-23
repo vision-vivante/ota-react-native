@@ -15,6 +15,7 @@ import {useDispatch} from 'react-redux';
 import RNRestart from 'react-native-restart';
 import {HeaderOptionContext} from '../../Context/HeaderOptionContext';
 import {useTranslation} from 'react-i18next';
+import { restartApp } from '../../Utils/AppRestart';
 
 const LanguageSelector = () => {
   const dispatch = useDispatch();
@@ -59,7 +60,7 @@ const LanguageSelector = () => {
           onPress: () => {
             dispatch(setLanguageWithStorage(language));
             setShowModal(false);
-            RNRestart.restart();
+           restartApp();
           },
         },
       ],

@@ -9,8 +9,8 @@ import {
   FlatList,
   ActivityIndicator,
   Keyboard,
-  Platform,
   I18nManager,
+  Platform,
 } from 'react-native';
 import {Images} from '../../../Config';
 import {COLOR, Matrics, typography} from '../../../Config/AppStyling';

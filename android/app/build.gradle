@@ -112,6 +112,7 @@ dependencies {
     implementation("com.facebook.react:react-android")
 implementation 'com.facebook.android:facebook-android-sdk:latest.release'
 implementation 'com.google.android.material:material:1.9.0'
+implementation project(':react-native-restart')
     if (hermesEnabled.toBoolean()) {
         implementation("com.facebook.react:hermes-android")
     } else {

@@ -33,13 +33,14 @@ const Profile = () => {
   const dispatch = useDispatch();
   console.log('Show cancel modal', showCancelModal);
 
-  useEffect(() => {
+useFocusEffect(
+  useCallback(() => {
     const backAction = () => {
       if (showCancelModal) {
         setShowCancelModal(false);
-        return true;
+        return true; // back handled
       }
-      return false;
+      return false; // allow default back
     };
 
     const backHandler = BackHandler.addEventListener(
@@ -47,8 +48,10 @@ const Profile = () => {
       backAction,
     );
 
-    return () => backHandler.remove();
-  }, [showCancelModal, setShowCancelModal]);
+    return () => backHandler.remove(); // ✅ safe cleanup
+  }, [showCancelModal])
+);
+
 
   useFocusEffect(
     useCallback(() => {

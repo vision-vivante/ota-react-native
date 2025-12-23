@@ -203,11 +203,7 @@ const NavigationStack = () => {
   console.log('Auth data', authData);
 
   // Helper function to determine which screen to show initially
-  const renderInitialScreen = async () => {
-    const hotelActiveDetails = await AsyncStorage.getItem('ActiveHotelDetails');
-    const parsedHotelActiveDetails = JSON.parse(hotelActiveDetails);
-    console.log('Hotel active details in nav stack', parsedHotelActiveDetails);
-
+  const renderInitialScreen = () => {
     if (!userToken) {
       return <Stack.Screen name="AuthStack" component={AuthStack} />;
     }

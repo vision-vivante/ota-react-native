@@ -16,6 +16,7 @@ end
 
 target 'ota' do
   config = use_native_modules!
+  pod 'react-native-restart', :path => '../node_modules/react-native-restart'
 
   use_react_native!(
     :path => config[:reactNativePath],

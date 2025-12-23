@@ -1,4 +1,4 @@
-import {View, Text, FlatList, Image} from 'react-native';
+import {View, Text, FlatList, Image, I18nManager} from 'react-native';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getTopHotelsThunk} from '../../Redux/Reducers/HotelReducer/GetHotelSlice';
@@ -9,6 +9,7 @@ import {Images} from '../../Config';
 const TopCitiesComponent = () => {
   const dispatch = useDispatch();
   const {topHotels, topCities} = useSelector(state => state.hotelSlice);
+  const isRTL = I18nManager.isRTL; // RTL check
 
   const renderEmptyComponent = () => {
     return (
@@ -30,7 +31,6 @@ const TopCitiesComponent = () => {
               overflow: 'hidden',
               boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
             }}>
-            {/* Image Placeholder with Overlay Effect */}
             <SkeletonPlaceholder.Item width={250} height={340} />
             <View
               style={{
@@ -39,18 +39,16 @@ const TopCitiesComponent = () => {
                 left: 0,
                 right: 0,
                 bottom: 0,
-                backgroundColor: 'rgba(0, 0, 0, 0.3)', // Subtle black overlay
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
               }}
             />
           </View>
-          {/* Text Overlay Placeholder */}
           <View
             style={{
               position: 'absolute',
               bottom: 28,
-              left: 38,
-              right: 38,
-              height: 50,
+              ...(isRTL ? {right: 38} : {left: 38}), // RTL support
+              width: 200,
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               borderRadius: 12,
               paddingHorizontal: 15,
@@ -106,7 +104,6 @@ const TopCitiesComponent = () => {
             style={{width: '100%', height: '100%'}}
             resizeMode="cover"
           />
-          {/* Subtle Black Overlay */}
           <View
             style={{
               position: 'absolute',
@@ -114,7 +111,7 @@ const TopCitiesComponent = () => {
               left: 0,
               right: 0,
               bottom: 0,
-              backgroundColor: 'rgba(0, 0, 0, 0.3)', // Subtle black overlay
+              backgroundColor: 'rgba(0, 0, 0, 0.3)',
             }}
           />
         </View>
@@ -123,7 +120,7 @@ const TopCitiesComponent = () => {
             position: 'absolute',
             bottom: 28,
             width: 200,
-            left: 38,
+            ...(isRTL ? {right: 38} : {left: 38}), // RTL support
             paddingHorizontal: 15,
             paddingVertical: 8,
             boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
@@ -159,7 +156,7 @@ const TopCitiesComponent = () => {
       <Text
         style={{
           fontFamily: typography.fontFamily.Montserrat.Bold,
-          marginLeft: 15,
+          marginHorizontal: 15, // Use marginHorizontal instead of marginLeft
           marginBottom: -15,
           fontSize: typography.fontSizes.fs22,
         }}>
@@ -172,6 +169,7 @@ const TopCitiesComponent = () => {
         ListEmptyComponent={renderMultipleEmptyComponents}
         horizontal
         showsHorizontalScrollIndicator={false}
+        inverted={isRTL} // RTL ke liye FlatList ko invert karo
       />
     </View>
   );

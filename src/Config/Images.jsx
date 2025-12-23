@@ -28,7 +28,7 @@ export default {
   REFERRAL_INACTIVE: require('../Assets/Images/referral-inactive.png'),
   TRANSLATE_ICON: require('../Assets/Images/translationicon.png'),
   CASH_ICON: require('../Assets/Images/cash.png'),
-  DOTS: require('./../Assets/Images/Dots.png'),
+  DOTS: require('./../Assets/Images/dots.png'),
   CALENDAR: require('../Assets/Images/calendar2-event1.png'),
   LOCATION_PIN: require('../Assets/Images/location-pin.png'),
   PEOPLE: require('../Assets/Images/people-outline1.png'),
