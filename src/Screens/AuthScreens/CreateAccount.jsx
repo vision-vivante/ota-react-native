@@ -256,9 +256,9 @@ const CreateAccount = () => {
         );
         navigation.replace('Login');
       } else if (response?.payload?.status === false) {
-        errorToast(response?.payload?.message);
+        errorToast(response?.payload?.error);
       } else if (response?.error?.message === 'Rejected') {
-        errorToast(response?.payload?.message);
+        errorToast(response?.payload?.error);
       }
     } catch (error) {
       console.log('Error', 'creating account');

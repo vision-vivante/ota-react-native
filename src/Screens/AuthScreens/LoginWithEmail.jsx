@@ -121,7 +121,7 @@ const LoginWithEmail = () => {
       if (response?.error?.message === 'Rejected') {
         console.log('Response', response);
 
-        errorToast(response?.payload?.message || response?.payload?.errors);
+        errorToast(response?.payload?.error || response?.payload?.errors);
       }
     } catch (error) {
       console.log('Error', 'login in account', error);

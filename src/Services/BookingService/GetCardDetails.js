@@ -2,7 +2,7 @@ import baseApiClient from '../baseApiClient';
 
 export const getCardDetails = async () => {
   try {
-    const response = await baseApiClient.get('payment/cardDetail');
+    const response = await baseApiClient.get('/payment/cardDetail');
     console.log('data of get card details', response);
     return response.data;
   } catch (error) {

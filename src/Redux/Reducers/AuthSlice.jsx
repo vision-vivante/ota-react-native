@@ -303,7 +303,7 @@ const authSlice = createSlice({
       clearUniversalToken();
       // Clear guest details from AsyncStorage
       AsyncStorage.removeItem(GUEST_DETAILS_KEY).catch(error => {
-        console.error('Error removing guest details:', error);
+      console.error('Error removing guest details:', error);
       });
     },
   },
@@ -392,6 +392,8 @@ const authSlice = createSlice({
       .addCase(googleLogin.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        console.log('Action payload for google login', action.payload);
+
         state.authData = action.payload;
         state.userToken = action.payload.token;
         saveToken(action.payload.token);

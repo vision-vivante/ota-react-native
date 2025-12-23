@@ -1,15 +1,16 @@
-import {View, Text, FlatList, Image} from 'react-native';
+import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import React from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getTopHotelsThunk} from '../../Redux/Reducers/HotelReducer/GetHotelSlice';
 import {COLOR, typography} from '../../Config/AppStyling';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {Images} from '../../Config';
+import {useNavigation} from '@react-navigation/native';
 
 const TopHotelComponent = () => {
   const dispatch = useDispatch();
   const {topHotels} = useSelector(state => state.hotelSlice);
-
+  const navigation = useNavigation();
   const renderEmptyComponent = () => {
     return (
       <View
@@ -72,9 +73,22 @@ const TopHotelComponent = () => {
     );
   };
 
+  const detailsForTopHotels = item => {
+    console.log('Item clicked', item);
+    navigation.navigate('HotelDetail', {
+      provider: item.provider,
+      hotelId: item.HotelID,
+      GiataId: item.GiataId,
+      cityName: item?.CityName,
+      countryCode: item?.CountryCode,
+      hotelName: item?.Name,
+      placeId: item?.PlaceId,
+    });
+  };
+
   const renderItem = ({item}) => {
     return (
-      <View
+      <TouchableOpacity
         style={{
           width: 280,
           height: 390,
@@ -82,7 +96,8 @@ const TopHotelComponent = () => {
           alignItems: 'center',
           backgroundColor: 'transparent',
           position: 'relative',
-        }}>
+        }}
+        onPress={() => detailsForTopHotels(item)}>
         <View
           style={{
             width: 250,
@@ -119,7 +134,7 @@ const TopHotelComponent = () => {
             {item.Name}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
     );
   };
 

@@ -89,6 +89,8 @@ const HotelDetail = ({route, navigation}) => {
     const fetchData = async () => {
       try {
         // Fetch hotel details first
+        console.log('Calling************fetch data');
+        
         await dispatch(getHotelDetailsThunk({details})).unwrap();
       } catch (error) {
         console.error('Error in fetching hotel details:', error);
@@ -112,6 +114,8 @@ const HotelDetail = ({route, navigation}) => {
     }
   }, [hotelDetail?.hotel, dispatch]);
   const handleLoadMore = async () => {
+    console.log('');
+    
     if (!isLoadingMore && !roomState.loadingRooms) {
       try {
         setIsLoadingMore(true);
@@ -280,7 +284,7 @@ const HotelDetail = ({route, navigation}) => {
                     showsHorizontalScrollIndicator={false}
                     ListEmptyComponent={renderEmptyList}
                     ItemSeparatorComponent={() => <View style={{width: 20}} />}
-                    onEndReached={handleLoadMore}
+                    // onEndReached={handleLoadMore}
                     onEndReachedThreshold={0.5}
                     ListFooterComponent={ListFooterComponent}
                   />

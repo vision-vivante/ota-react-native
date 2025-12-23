@@ -22,6 +22,8 @@ const RoomPolicies = ({
   containerStyle,
 }) => {
   const {authData} = useSelector(state => state.auth);
+  console.log('Auth Data', authData);
+
   const [showLoginModal, setShowLoginModal] = React.useState(false);
 
   const dispatch = useDispatch();

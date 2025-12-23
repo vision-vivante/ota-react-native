@@ -3,7 +3,7 @@ import baseApiClient from './baseApiClient';
 export const sendSupportMessage = async data => {
   console.log('data in api', data);
   try {
-    const response = await baseApiClient.post('/profile/cotsct-us', data, {
+    const response = await baseApiClient.post('/profile/contact-us', data, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
