@@ -1,6 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
-import {NavigationContainer} from '@react-navigation/native';
+import {
+  NavigationContainer,
+  useNavigationContainerRef,
+} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
@@ -35,6 +38,7 @@ import i18n from './i18n/i18n';
 import ReferralStack from './Screens/Referrals';
 import ChangePassword from './Screens/Profile/ChangePassword';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {consumePendingHotelFlow} from './Utils/GuestBookingFlowFunctions';
 
 // Define Stacks
 const Stack = createNativeStackNavigator();
@@ -200,6 +204,8 @@ const NavigationStack = () => {
   const dispatch = useDispatch();
   const {userToken, authData} = useSelector(state => state.auth);
   const [isSplashVisible, setSplashVisible] = useState(true);
+  const [isNavReady, setNavReady] = useState(false);
+  const navigationRef = useNavigationContainerRef();
   console.log('Auth data', authData);
 
   // Helper function to determine which screen to show initially
@@ -247,12 +253,42 @@ const NavigationStack = () => {
     initializeApp();
   }, [dispatch]);
 
+  // Resume any pending hotel booking flow after authentication completes
+  useEffect(() => {
+    const resumePendingHotelFlow = async () => {
+      if (!userToken || !isNavReady) {
+        return;
+      }
+
+      const pending = await consumePendingHotelFlow();
+      if (pending?.hotelId) {
+        const {hotelId, giataId, provider, targetRoute, targetParams} = pending;
+        navigationRef.current?.navigate('Home', {
+          screen: 'Hotels',
+          params: {
+            screen: targetRoute || 'HotelDetail',
+            params: {
+              provider,
+              hotelId,
+              GiataId: giataId,
+              ...(targetParams || {}),
+            },
+          },
+        });
+      }
+    };
+
+    resumePendingHotelFlow();
+  }, [userToken, isNavReady, navigationRef]);
+
   if (isSplashVisible) {
     return <Splash />;
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer
+      ref={navigationRef}
+      onReady={() => setNavReady(true)}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
         {renderInitialScreen()}
       </Stack.Navigator>

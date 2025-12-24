@@ -10,7 +10,10 @@ import {errorToast} from '../../../Helpers/ToastMessage';
 import {useNavigation} from '@react-navigation/native';
 import i18n from '../../../i18n/i18n';
 import AuthenticationModal from '../../../Components/AuthenticationModal';
-import {saveHotelDetails} from '../../../Utils/GuestBookingFlowFunctions';
+import {
+  saveHotelDetails,
+  stashPendingHotelFlow,
+} from '../../../Utils/GuestBookingFlowFunctions';
 import useCancellationPolicy from '../../../Context/CustomHookForRoomCancellationPolicy';
 
 const RoomPolicies = ({
@@ -49,6 +52,13 @@ const RoomPolicies = ({
     if (!authData && !userToken) {
       try {
         await saveHotelDetails({hotelId: hotelId, giataId: GiataId, provider});
+        await stashPendingHotelFlow({
+          hotelId,
+          giataId: GiataId,
+          provider,
+          targetRoute: 'HotelBooking',
+          targetParams: {provider, hotelId, giataId: GiataId},
+        });
       } catch (error) {
         console.log('Error storing hotel ID:', error);
       }
