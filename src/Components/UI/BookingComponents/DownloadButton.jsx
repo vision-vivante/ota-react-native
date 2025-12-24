@@ -29,7 +29,7 @@ const DownloadButton = ({invoicePath, title}) => {
     }
 
     // Construct the complete URL
-    const downloadUrl = `https://otaapi.visionvivante.in/profile/download?file=${invoicePath}`;
+    const downloadUrl = `https://otaapi.arabgcc.com/profile/download?file=${invoicePath}`;
 
     setIsDownloading(true);
 

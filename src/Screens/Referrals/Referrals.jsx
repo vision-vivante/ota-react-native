@@ -120,7 +120,7 @@ const Referrals = () => {
   const loadReferrals = useCallback(
     async (
       page = 1,
-      statusType = null,
+      statusType = 'null',
       filterName = 'All',
       isNewFilter = false,
     ) => {
@@ -161,7 +161,7 @@ const Referrals = () => {
             const thunkParams = {
               pageCount: 1,
               limit: limit,
-              statusType: null,
+              statusType: 'null',
               isNewFilter: true,
             };
 
@@ -449,7 +449,8 @@ const Referrals = () => {
               }}>
               $
               {Number(
-                cashbackList?.total_cashback + referralList?.data?.total_amount,
+                (Number(cashbackList?.total_cashback) || 0) +
+                  (Number(referralList?.data?.total_amount) || 0),
               ).toFixed(2)}
             </Text>
           </View>
@@ -491,7 +492,7 @@ const Referrals = () => {
                   fontFamily: typography.fontFamily.Montserrat.Bold,
                   color: COLOR.PRIMARY,
                 }}>
-                {referralList?.data?.total_amount}
+                {Number(referralList?.data?.total_amount || 0).toFixed(2)}
               </Text>
             </View>
             <View

@@ -92,7 +92,7 @@ const Cashback = () => {
         const thunkParams = {
           pageCount: page,
           limit: limit,
-          statusType: null,
+          statusType: 'null',
           isNewFilter: false,
         };
 
@@ -171,7 +171,7 @@ const Cashback = () => {
                   currentFilter === option.value &&
                     styles.selectedDropdownItemText,
                 ]}>
-                {option.label}
+                {option?.label}
               </Text>
             </TouchableOpacity>
           ))}
@@ -275,11 +275,17 @@ const Cashback = () => {
     </View>
   );
 
-  const renderErrorState = () => (
-    <View style={styles.errorState}>
-      <Text style={styles.errorText}>{error}</Text>
-    </View>
-  );
+  const renderErrorState = () => {
+    const errorText =
+      typeof error === 'string'
+        ? error
+        : error?.message || error?.error || JSON.stringify(error);
+    return (
+      <View style={styles.errorState}>
+        <Text style={styles.errorText}>{errorText}</Text>
+      </View>
+    );
+  };
 
   const renderContent = () => (
     <>
@@ -320,7 +326,8 @@ const Cashback = () => {
               }}>
               $
               {Number(
-                cashbackList?.total_cashback + referralList?.data?.total_amount,
+                (Number(cashbackList?.total_cashback) || 0) +
+                  (Number(referralList?.data?.total_amount) || 0),
               ).toFixed(2)}
             </Text>
           </View>
@@ -362,7 +369,7 @@ const Cashback = () => {
                   fontFamily: typography.fontFamily.Montserrat.Bold,
                   color: COLOR.PRIMARY,
                 }}>
-                ${Number(cashbackList?.total_cashback).toFixed(2) || '0.00'}
+                ${(Number(cashbackList?.total_cashback) || 0).toFixed(2)}
               </Text>
             </View>
             <View

@@ -11,6 +11,7 @@ export const getReferralList = async (
       limit: limit,
       statusType: statusType,
     };
+    console.log('Params', params);
 
     const response = await baseApiClient.get('/profile/referal-list', {params});
     return response.data;

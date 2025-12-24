@@ -38,6 +38,7 @@ const BookingControllerCard = ({
 
   // Check if check-in date has passed
   const isCheckInDatePassed = dayjs(checkInDate).isBefore(dayjs(), 'day');
+  console.log('INvoice path', invoicePath);
 
   return (
     <TouchableOpacity

@@ -132,7 +132,7 @@ const HotelDetail = ({route, navigation}) => {
         Longitude: hotelDetail.hotel.Longitude || hotelDetail.hotel.longitude,
         Latitude: hotelDetail.hotel.Latitude || hotelDetail.hotel.latitude,
       };
-      dispatch(getAdditionalDetail({details: detailsForAdditionalDetails}));
+      // dispatch(getAdditionalDetail({details: detailsForAdditionalDetails}));
     }
   }, [hotelDetail?.hotel, dispatch]);
   const handleLoadMore = async () => {
