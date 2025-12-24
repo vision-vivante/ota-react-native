@@ -62,7 +62,9 @@ const HotelSearchCard = () => {
     showGuestsModal,
     setShowGuestsModal,
     pets,
-    page, setPage
+    page,
+    setPage,
+    setDestinationInfo,
   } = useContext(RoomContext);
 
   const {cityDetails, loadingCityDetails} = useSelector(state => state.getCity);
@@ -210,26 +212,27 @@ const HotelSearchCard = () => {
   };
 
   const debouncedSearch = useCallback(
-  debounce(async searchText => {
-    if (searchText.length < 2) {
-      setShowFlatList(false);
-      return;
-    }
-    try {
-      setShowFlatList(true);
-      await dispatch(getCityDetailsThunk({
-        cityName: searchText,
-        page: 1, // Reset to page 1 for new searches
-        limit: 20
-      }));
-      setPage(1); // Reset page counter
-    } catch (error) {
-      console.error('Error getting hotel details', error);
-    }
-  }, 500),
-  [dispatch],
-);
-
+    debounce(async searchText => {
+      if (searchText.length < 2) {
+        setShowFlatList(false);
+        return;
+      }
+      try {
+        setShowFlatList(true);
+        await dispatch(
+          getCityDetailsThunk({
+            cityName: searchText,
+            page: 1, // Reset to page 1 for new searches
+            limit: 20,
+          }),
+        );
+        setPage(1); // Reset page counter
+      } catch (error) {
+        console.error('Error getting hotel details', error);
+      }
+    }, 500),
+    [dispatch],
+  );
 
   useEffect(() => {
     return () => {
@@ -238,23 +241,25 @@ const HotelSearchCard = () => {
   }, [debouncedSearch]);
 
   const handleLoadMore = async () => {
-  if (!isLoadingMore && !loadingCityDetails) {
-    try {
-      setIsLoadingMore(true);
-      const nextPage = page + 1;
-      await dispatch(getCityDetailsThunk({
-        cityName: destination,
-        page: nextPage,
-        limit: 20
-      }));
-      setPage(nextPage);
-    } catch (error) {
-      console.error('Error loading more cities:', error);
-    } finally {
-      setIsLoadingMore(false);
+    if (!isLoadingMore && !loadingCityDetails) {
+      try {
+        setIsLoadingMore(true);
+        const nextPage = page + 1;
+        await dispatch(
+          getCityDetailsThunk({
+            cityName: destination,
+            page: nextPage,
+            limit: 20,
+          }),
+        );
+        setPage(nextPage);
+      } catch (error) {
+        console.error('Error loading more cities:', error);
+      } finally {
+        setIsLoadingMore(false);
+      }
     }
-  }
-};
+  };
   /* --------------------------- handle search press --------------------------- */
   const handleSearchPress = async () => {
     if (
@@ -267,12 +272,6 @@ const HotelSearchCard = () => {
       return;
     }
 
-    if (dayjs(hotelStayStartDate).isSameOrBefore(dayjs(), 'day')) {
-      const error = i18n.t('Toast.checkInDateMustBeFuture');
-      errorToast(error);
-      return;
-    }
-
     if (!hotelStayStartDate) {
       const error = i18n.t('toastMessages.selectCheckInDate');
       errorToast(error);
@@ -280,6 +279,13 @@ const HotelSearchCard = () => {
     }
     if (!hotelStayEndDate) {
       const error = i18n.t('toastMessages.selectCheckoutDate');
+      errorToast(error);
+      return;
+    }
+
+    // Validate that check-in date is in the future (allow dates set by TopHotels auto-fill)
+    if (dayjs(hotelStayStartDate).isBefore(dayjs(), 'day')) {
+      const error = i18n.t('Toast.checkInDateMustBeFuture');
       errorToast(error);
       return;
     }
@@ -300,6 +306,12 @@ const HotelSearchCard = () => {
       errorToast(error);
       return;
     }
+    setDestinationInfo({
+      cityName: cityDetails[selectedCityIndex].cityName ?? destination.trim(),
+      destinationName: cityDetails[selectedCityIndex].destinationName,
+      countryCode: cityDetails[selectedCityIndex].countryCode,
+      countryName: cityDetails[selectedCityIndex].countryName,
+    });
     const detailsForDestinationSearch = {
       cityName: cityDetails[selectedCityIndex].cityName ?? destination.trim(),
       destinationName: cityDetails[selectedCityIndex].destinationName,
@@ -316,7 +328,7 @@ const HotelSearchCard = () => {
       Nationality: 'IN',
       Currency: selectedCurrency ?? 'USD',
       limit: 5,
-    page: 1,
+      page: 1,
     };
     await dispatch(getFacilitiesThunk());
     console.log('detailsForDestinationSearch', detailsForDestinationSearch);
@@ -392,21 +404,24 @@ const HotelSearchCard = () => {
                 showFlatList &&
                 cityDetails?.length > 0 && (
                   <FlatList
-  data={cityDetails}
-  style={styles.flatListStyle}
-  keyExtractor={(item, index) => index.toString()}
-  keyboardShouldPersistTaps="handled"
-  nestedScrollEnabled={true}
-  showsVerticalScrollIndicator={true}
-  onEndReachedThreshold={0.5}
-  ListFooterComponent={() => (
-    isLoadingMore ? (
-      <View style={styles.footerLoader}>
-        <ActivityIndicator size="small" color={COLOR.PRIMARY} />
-      </View>
-    ) : null
-  )}
-  renderItem={({item, index}) => (
+                    data={cityDetails}
+                    style={styles.flatListStyle}
+                    keyExtractor={(item, index) => index.toString()}
+                    keyboardShouldPersistTaps="handled"
+                    nestedScrollEnabled={true}
+                    showsVerticalScrollIndicator={true}
+                    onEndReachedThreshold={0.5}
+                    ListFooterComponent={() =>
+                      isLoadingMore ? (
+                        <View style={styles.footerLoader}>
+                          <ActivityIndicator
+                            size="small"
+                            color={COLOR.PRIMARY}
+                          />
+                        </View>
+                      ) : null
+                    }
+                    renderItem={({item, index}) => (
                       <TouchableOpacity
                         style={styles.cityItem}
                         onPress={() =>
@@ -1162,7 +1177,7 @@ const datePickerStyles = StyleSheet.create({
   selected_year_label: {
     color: COLOR.WHITE,
   },
-   footerLoader: {
+  footerLoader: {
     paddingVertical: Matrics.vs(20),
     alignItems: 'center',
   },

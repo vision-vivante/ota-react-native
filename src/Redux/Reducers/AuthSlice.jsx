@@ -7,7 +7,10 @@ import {
   sendOtptobackend,
   socialLogin,
 } from '../../Services/AuthServices';
-import {GoogleSignin} from '@react-native-google-signin/google-signin';
+import {
+  GoogleSignin,
+  statusCodes,
+} from '@react-native-google-signin/google-signin';
 import {LoginManager, Profile, AccessToken} from 'react-native-fbsdk-next';
 import {appleAuth} from '@invertase/react-native-apple-authentication';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -131,14 +134,14 @@ export const googleLogin = createAsyncThunk(
   async (_, {rejectWithValue}) => {
     try {
       await GoogleSignin.hasPlayServices();
-      const googleResponse = await GoogleSignin.signIn();
-      console.log('Google response', googleResponse);
-      if (googleResponse.type === 'cancelled') {
-        return rejectWithValue('Google sign in cancelled by user');
+      const {user} = await GoogleSignin.signIn();
+      console.log('Google user', user);
+      if (!user) {
+        return rejectWithValue('Google sign in failed: no user returned');
       }
-      const googleId = googleResponse?.data?.user?.id;
-      const googleName = googleResponse?.data?.user?.name;
-      const googleEmail = googleResponse?.data?.user?.email;
+      const googleId = user?.id;
+      const googleName = user?.name;
+      const googleEmail = user?.email;
       const details = {
         google_id: googleId,
         name: googleName,
@@ -150,6 +153,19 @@ export const googleLogin = createAsyncThunk(
       return response?.data?.data;
     } catch (error) {
       console.log('Google sign in error', error);
+      // Normalize known Google Sign-In errors
+      if (error?.code === statusCodes.SIGN_IN_CANCELLED) {
+        return rejectWithValue('Google sign in cancelled by user');
+      }
+      if (error?.code === statusCodes.IN_PROGRESS) {
+        return rejectWithValue('Google sign in already in progress');
+      }
+      if (error?.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        return rejectWithValue(
+          'Google Play Services not available or outdated',
+        );
+      }
+      return rejectWithValue(error?.message || 'Google sign in failed');
     }
   },
 );
@@ -303,7 +319,7 @@ const authSlice = createSlice({
       clearUniversalToken();
       // Clear guest details from AsyncStorage
       AsyncStorage.removeItem(GUEST_DETAILS_KEY).catch(error => {
-      console.error('Error removing guest details:', error);
+        console.error('Error removing guest details:', error);
       });
     },
   },

@@ -23,16 +23,24 @@ import {Images} from '../Config';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-controller';
 import {useDispatch, useSelector} from 'react-redux';
 import {getCityDetailsThunk} from '../Redux/Reducers/HotelReducer/GetCitySlice';
+import DatePicker from 'react-native-date-picker';
+import dayjs from 'dayjs';
 
 const GENDER_OPTIONS = [
-  {label: 'Male', value: 'male'},
-  {label: 'Female', value: 'female'},
-  {label: 'Transgender', value: 'transgender'},
+  {label: 'Male', value: 'Male'},
+  {label: 'Female', value: 'Female'},
+  {label: 'Transgender', value: 'Transgender'},
+];
+
+const TITLES = [
+  {label: 'Mr.', value: 'Mr'},
+  {label: 'Miss', value: 'Miss'},
+  {label: 'Mrs.', value: 'Mrs'},
 ];
 
 const DOCUMENT_TYPES = [
-  {label: 'Passport', value: 'passport'},
-  {label: 'Driving License', value: 'driving_license'},
+  {label: 'Passport', value: 'Passport'},
+  {label: 'Driving License', value: 'Driving_License'},
 ];
 
 const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
@@ -41,6 +49,8 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
 
   const isPrimaryGuest = guestIndex === 0;
   const [formData, setFormData] = useState({
+    title: guestData?.title || '',
+    birth_date: guestData?.birth_date || '',
     firstName: guestData?.firstName || '',
     lastName: guestData?.lastName || '',
     gender: guestData?.gender || '',
@@ -56,6 +66,7 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
     countryCode: guestData?.countryCode || '+91',
   });
   const [errors, setErrors] = useState({
+    title: '',
     firstName: '',
     lastName: '',
     gender: '',
@@ -77,6 +88,21 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
   );
   const [showCityFlatList, setShowCityFlatList] = useState(false);
   const [selectedCityIndex, setSelectedCityIndex] = useState(null);
+  const [dob, setDob] = useState(
+    dayjs(guestData?.dob || '2005-01-01').toDate(),
+  );
+
+  // Calculate age when DOB changes
+  useEffect(() => {
+    const calculatedAge = dayjs().diff(dayjs(dob), 'year');
+    const formattedDob = dayjs(dob).format('YYYY-MM-DD');
+    setFormData(prev => ({
+      ...prev,
+      age: calculatedAge.toString(),
+      birth_date: formattedDob,
+    }));
+    setErrors(prev => ({...prev, age: validateAge(calculatedAge.toString())}));
+  }, [dob]);
 
   // Debounced search function for city
   const debouncedSearchFunction = useMemo(
@@ -144,6 +170,13 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
   const validateText = (value, fieldName) => {
     if (!value.trim()) {
       return i18n.t(`validationMessages.no${fieldName}`);
+    }
+    return '';
+  };
+
+  const validateTitle = value => {
+    if (!value) {
+      return i18n.t('validationMessages.noTitle');
     }
     return '';
   };
@@ -269,6 +302,7 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
 
   const handleSave = () => {
     const validations = {
+      title: validateTitle(formData.title),
       firstName: validateText(formData.firstName, 'FirstName'),
       lastName: validateText(formData.lastName, 'LastName'),
       gender: validateGender(formData.gender),
@@ -339,7 +373,30 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
               />
             </TouchableOpacity>
           </View>
-
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              Title <Text style={styles.asterisk}>*</Text>
+            </Text>
+            <Dropdown
+              style={[styles.dropdown, errors.title ? styles.inputError : null]}
+              data={TITLES}
+              labelField="label"
+              valueField="value"
+              placeholder="Select Title"
+              placeholderStyle={styles.dropdownPlaceholder}
+              selectedTextStyle={styles.dropdownText}
+              itemTextStyle={styles.dropdownText}
+              containerStyle={styles.dropdownContainer}
+              value={formData.title}
+              onChange={item =>
+                handleDropdownChange('title', item.value, validateTitle)
+              }
+              fontFamily={typography.fontFamily.Montserrat.Regular}
+            />
+            {errors.title ? (
+              <Text style={styles.errorText}>{errors.title}</Text>
+            ) : null}
+          </View>
           <View style={styles.formGroup}>
             <Text style={styles.label}>
               First Name <Text style={styles.asterisk}>*</Text>
@@ -414,16 +471,38 @@ const GuestForm = ({guestIndex, guestData, onSave, onCancel}) => {
           </View>
           <View style={styles.formGroup}>
             <Text style={styles.label}>
-              Age <Text style={styles.asterisk}>*</Text>
+              DOB <Text style={styles.asterisk}>*</Text>
             </Text>
-            <TextInput
+            <DatePicker date={dob} onDateChange={setDob} mode={'date'} />
+            {/* <TextInput
               style={[styles.input, errors.age ? styles.inputError : null]}
-              placeholder="Enter age"
+              placeholder="Enter DOB"
               placeholderTextColor="#999"
               value={formData.age}
               onChangeText={value =>
                 handleTextChange('age', value, validateAge)
               }
+              keyboardType="numeric"
+            /> */}
+            {errors.age ? (
+              <Text style={styles.errorText}>{errors.age}</Text>
+            ) : null}
+          </View>
+
+          <View style={styles.formGroup}>
+            <Text style={styles.label}>
+              Age <Text style={styles.asterisk}>*</Text>
+            </Text>
+            <TextInput
+              style={[
+                styles.input,
+                errors.age ? styles.inputError : null,
+                {backgroundColor: '#f5f5f5'},
+              ]}
+              placeholder="Age (calculated from DOB)"
+              placeholderTextColor="#999"
+              value={formData.age}
+              editable={false}
               keyboardType="numeric"
             />
             {errors.age ? (
@@ -739,7 +818,7 @@ const styles = StyleSheet.create({
   formTitle: {
     fontSize: Matrics.s(16),
     fontFamily: typography.fontFamily.Montserrat.Bold,
-    color: '#6A1B9A', // Matches the purple in the screenshot
+    color: '#6A1B9A',
     textAlign: 'center',
   },
   formGroup: {

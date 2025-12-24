@@ -16,10 +16,13 @@ export const bookHotel = async ({details}) => {
 
   try {
     const response = await baseApiClient.post(
-      '/booking/book-hotel',
+      'booking/book-hotel',
       details,
       config,
     );
+
+    console.log('Response for book hotel', response);
+
     return response.data;
   } catch (error) {
     console.log(error);

@@ -7,14 +7,8 @@ import {
   Image,
   Animated,
   Platform,
-  Alert,
 } from 'react-native';
-import {
-  useFocusEffect,
-  useNavigation,
-  useRoute,
-} from '@react-navigation/native';
-import {useStripe} from '@stripe/stripe-react-native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import NormalHeader from '../../../Components/UI/NormalHeader'; // Adjust path
 import {COLOR, Matrics, typography} from '../../../Config/AppStyling'; // Adjust path
 import {Images} from '../../../Config'; // Adjust path
@@ -110,6 +104,10 @@ const ReviewUserDetails = () => {
         {isExpanded && (
           <View style={styles.accordionContent}>
             <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>Title:</Text>
+              <Text style={styles.detailValue}>{guest.title || 'N/A'}</Text>
+            </View>
+            <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>First Name:</Text>
               <Text style={styles.detailValue}>{guest.firstName || 'N/A'}</Text>
             </View>
@@ -120,6 +118,12 @@ const ReviewUserDetails = () => {
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Gender:</Text>
               <Text style={styles.detailValue}>{guest.gender || 'N/A'}</Text>
+            </View>
+            <View style={styles.detailRow}>
+              <Text style={styles.detailLabel}>DOB:</Text>
+              <Text style={styles.detailValue}>
+                {guest.birth_date || 'N/A'}
+              </Text>
             </View>
             <View style={styles.detailRow}>
               <Text style={styles.detailLabel}>Age:</Text>

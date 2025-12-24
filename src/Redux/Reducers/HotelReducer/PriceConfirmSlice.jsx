@@ -5,12 +5,13 @@ const initialState = {
   priceConfirmDetails: null,
   confirmingPriceFromServer: null,
   priceConfirmError: null,
+  roomDetailFromSelection: [],
 };
 
 export const confirmPrice = createAsyncThunk(
   'price/confirmPrice',
   async ({details}, {rejectWithValue}) => {
-    console.log('inside confirmPrice');
+    console.log('inside confirmPrice', details);
 
     try {
       const response = await priceConfirm({details: details});
@@ -40,10 +41,14 @@ const confirmPriceSlice = createSlice({
 
           console.log('Before state update:', state);
           state.priceConfirmDetails = action.payload.result;
+          state.roomDetailFromSelection =
+            action.meta?.arg?.details?.roomDetail || [];
           console.log('After state update:', state);
         } else if (action?.payload?.status === false) {
           console.log('Inside false');
           state.priceConfirmDetails = action?.payload;
+          state.roomDetailFromSelection =
+            action.meta?.arg?.details?.roomDetail || [];
         }
       })
       .addCase(confirmPrice.rejected, (state, action) => {

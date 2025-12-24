@@ -1,16 +1,18 @@
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
-import React from 'react';
+import React, {useContext} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getTopHotelsThunk} from '../../Redux/Reducers/HotelReducer/GetHotelSlice';
 import {COLOR, typography} from '../../Config/AppStyling';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {Images} from '../../Config';
 import {useNavigation} from '@react-navigation/native';
+import {RoomContext} from '../../Context/RoomContext';
 
 const TopHotelComponent = () => {
   const dispatch = useDispatch();
   const {topHotels} = useSelector(state => state.hotelSlice);
   const navigation = useNavigation();
+  const {setDefaultDates} = useContext(RoomContext);
   const renderEmptyComponent = () => {
     return (
       <View
@@ -29,7 +31,7 @@ const TopHotelComponent = () => {
               height: 340,
               borderRadius: 15,
               overflow: 'hidden',
-              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Matching shadow
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
             }}>
             {/* Image Placeholder */}
             <SkeletonPlaceholder.Item width={250} height={340} />
@@ -42,7 +44,7 @@ const TopHotelComponent = () => {
               left: 15,
               right: 15,
               height: 50,
-              backgroundColor: 'rgba(255, 255, 255, 0.95)', // Semi-transparent white
+              backgroundColor: 'rgba(255, 255, 255, 0.95)',
               borderRadius: 12,
               paddingHorizontal: 15,
               paddingVertical: 12,
@@ -74,7 +76,11 @@ const TopHotelComponent = () => {
   };
 
   const detailsForTopHotels = item => {
-    console.log('Item clicked', item);
+    console.log('TopHotel clicked:', item.Name);
+    // Set default dates when clicking from top hotels
+    console.log('Calling setDefaultDates from TopHotelComponent');
+    setDefaultDates();
+    console.log('Navigating to HotelDetail');
     navigation.navigate('HotelDetail', {
       provider: item.provider,
       hotelId: item.HotelID,
@@ -138,17 +144,17 @@ const TopHotelComponent = () => {
     );
   };
 
-  const fetchTopHotels = () => {
+  const fetchTopHotels = React.useCallback(() => {
     const details = {
       countryCode: 'IN',
       countryName: 'India',
     };
     dispatch(getTopHotelsThunk({details: details}));
-  };
+  }, [dispatch]);
 
   React.useEffect(() => {
     fetchTopHotels();
-  }, [dispatch]);
+  }, [fetchTopHotels]);
 
   return (
     <View>

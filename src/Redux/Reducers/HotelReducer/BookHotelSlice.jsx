@@ -14,6 +14,7 @@ export const bookHotelThunk = createAsyncThunk(
       const response = await bookHotel({
         details,
       });
+      console.log('Response for book hotel', response);
 
       return response;
     } catch (err) {
@@ -40,6 +41,8 @@ const bookHotelSlice = createSlice({
         state.bookingConfirmationDetails = action.payload;
       })
       .addCase(bookHotelThunk.rejected, state => {
+        console.log('REject');
+
         state.loadingBooking = false;
         state.bookingConfirmationDetails = {};
       });

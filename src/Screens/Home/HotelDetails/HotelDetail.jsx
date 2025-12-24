@@ -32,6 +32,9 @@ import i18n from '../../../i18n/i18n';
 import RoomAmenities from '../../../Components/UI/RoomAmenities';
 import SimilarHotels from '../../../Components/HotelComponents/SimilarHotels';
 import {PolicyInfoContext} from '../../../Context/PolicyInfoContext';
+import {RoomContext} from '../../../Context/RoomContext';
+import useCancellationPolicy from '../../../Context/CustomHookForRoomCancellationPolicy';
+
 const StarRating = ({rating = 0, reviewCount = 0}) => {
   return (
     <View style={styles.ratingContainer}>
@@ -65,6 +68,25 @@ const HotelDetail = ({route, navigation}) => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const {provider, hotelId, GiataId} = route.params;
   const {setProvider, setHotelId, setGiataId} = useContext(PolicyInfoContext);
+  const {hotelStayStartDate, hotelStayEndDate, setDefaultDates} =
+    useContext(RoomContext);
+
+  // Ensure dates are set when entering hotel detail
+  useEffect(() => {
+    console.log(
+      'HotelDetail mounted - Start date:',
+      hotelStayStartDate,
+      'End date:',
+      hotelStayEndDate,
+    );
+    if (!hotelStayStartDate || !hotelStayEndDate) {
+      console.log('No dates found in context, setting default dates');
+      setDefaultDates();
+    } else {
+      console.log('Dates already set in context');
+    }
+  }, []);
+
   useEffect(() => {
     setProvider(provider);
     setHotelId(hotelId);
@@ -90,7 +112,7 @@ const HotelDetail = ({route, navigation}) => {
       try {
         // Fetch hotel details first
         console.log('Calling************fetch data');
-        
+
         await dispatch(getHotelDetailsThunk({details})).unwrap();
       } catch (error) {
         console.error('Error in fetching hotel details:', error);
@@ -115,7 +137,7 @@ const HotelDetail = ({route, navigation}) => {
   }, [hotelDetail?.hotel, dispatch]);
   const handleLoadMore = async () => {
     console.log('');
-    
+
     if (!isLoadingMore && !roomState.loadingRooms) {
       try {
         setIsLoadingMore(true);

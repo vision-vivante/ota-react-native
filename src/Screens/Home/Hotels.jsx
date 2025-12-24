@@ -144,7 +144,6 @@ const Hotels = ({navigation}) => {
   };
 
   const renderHotelCard = ({item}) => {
-    console.log('Item', item);
     return (
       <Pressable
         onPress={() =>

@@ -1,5 +1,5 @@
 import {View, Text, StyleSheet, Platform} from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {COLOR, Matrics, typography} from '../../../Config/AppStyling';
 import {RoomContext} from '../../../Context/RoomContext';
 import CheckoutToast from '../../../Components/UI/CheckoutToast';
@@ -9,9 +9,9 @@ import {confirmPrice} from '../../../Redux/Reducers/HotelReducer/PriceConfirmSli
 import {errorToast} from '../../../Helpers/ToastMessage';
 import {useNavigation} from '@react-navigation/native';
 import i18n from '../../../i18n/i18n';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import AuthenticationModal from '../../../Components/AuthenticationModal';
 import {saveHotelDetails} from '../../../Utils/GuestBookingFlowFunctions';
+import useCancellationPolicy from '../../../Context/CustomHookForRoomCancellationPolicy';
 
 const RoomPolicies = ({
   roomInfo,
@@ -21,24 +21,32 @@ const RoomPolicies = ({
   showProceedButton = true,
   containerStyle,
 }) => {
-  const {authData} = useSelector(state => state.auth);
+  const {authData, userToken} = useSelector(state => state.auth);
   console.log('Auth Data', authData);
 
   const [showLoginModal, setShowLoginModal] = React.useState(false);
 
   const dispatch = useDispatch();
-  const {selectedRoomId} = useContext(RoomContext);
+  const {selectedRoomId, setRoomDetails} = useContext(RoomContext);
   const selectedRoom = roomInfo?.find(
     room => room?.RatePlanID === selectedRoomId,
   );
 
+  console.log('*********************************Room Info', selectedRoom);
+
   const {ratePlanId} = useContext(RoomContext);
-  const {hotelStayStartDate, hotelStayEndDate, adults, rooms, pluaralChild} =
-    useContext(RoomContext);
+  const {
+    hotelStayStartDate,
+    hotelStayEndDate,
+    adults,
+    rooms,
+    pluaralChild,
+    setRoomTypeId,
+  } = useContext(RoomContext);
 
   const navigation = useNavigation();
   const handleCheckoutPress = async () => {
-    if (!authData) {
+    if (!authData && !userToken) {
       try {
         await saveHotelDetails({hotelId: hotelId, giataId: GiataId, provider});
       } catch (error) {
@@ -52,6 +60,13 @@ const RoomPolicies = ({
       const error = 'Please select check-in and check-out dates';
       return errorToast(error);
     }
+    setRoomDetails([
+      {
+        RoomName: selectedRoom?.RoomName || selectedRoom?.RatePlanName,
+        totalPrice: selectedRoom?.totalprice,
+      },
+    ]);
+    setRoomTypeId(selectedRoom?.RoomTypeID);
     const detailsForPriceConfirm = {
       RatePlanID: ratePlanId,
       provider: provider,
@@ -66,6 +81,12 @@ const RoomPolicies = ({
           ChildCount: pluaralChild,
           AdultCount: adults,
           RoomNum: rooms,
+        },
+      ],
+      roomDetail: [
+        {
+          RoomName: selectedRoom?.RoomName || selectedRoom?.RatePlanName,
+          totalprice: selectedRoom?.totalprice,
         },
       ],
     };
@@ -87,6 +108,18 @@ const RoomPolicies = ({
       console.log('Error in price confirm', error);
     }
   };
+
+  // Auto-close auth modal and resume once authenticated
+  useEffect(() => {
+    if ((authData || userToken) && showLoginModal) {
+      setShowLoginModal(false);
+      // Resume flow on the next tick to allow modal state to settle
+      setTimeout(() => {
+        handleCheckoutPress();
+      }, 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authData, userToken, showLoginModal]);
   return (
     <View
       style={[
@@ -156,8 +189,11 @@ const RoomPolicies = ({
               style={{
                 fontFamily: typography.fontFamily.Montserrat.Medium,
                 color: COLOR.PRIMARY,
+                width: '80%',
               }}>
-              {selectedRoom?.RatePlanCancellationPolicyList[0]?.amount}
+              {useCancellationPolicy(
+                selectedRoom?.RatePlanCancellationPolicyList,
+              )}
             </Text>
           </View>
         </View>
