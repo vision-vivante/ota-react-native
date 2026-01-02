@@ -9,12 +9,13 @@
 /* Begin PBXBuildFile section */
 		01D57E27347647B7BADFAAB2 /* RobotoSlab-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7415F8FA3CF14271AA132FA7 /* RobotoSlab-Light.ttf */; };
 		0419F17E2D5B492EB93B475B /* Montserrat-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DDCEE016CAE3402A8469825C /* Montserrat-ExtraLight.ttf */; };
-		0C80B921A6F3F58F76C31292 /* libPods-ota.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-ota.a */; };
 		0D0C5EC56F844AF7A7B82EF1 /* Montserrat-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D5FF1FDDB95C4087A5E6DFE7 /* Montserrat-Black.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		1C5AF4F760ECE98B50BFCAB3 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
 		253618BADCAA4E3BA0B0B713 /* RobotoSlab-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 63E8BE76E19C486DA965B071 /* RobotoSlab-Regular.ttf */; };
 		27C81E33DEB44221A1C27705 /* Montserrat-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BB549CBADF1B41088533BD59 /* Montserrat-Light.ttf */; };
+		362E3ACD2F07ABBA00568FD0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 362E3ACB2F07ABBA00568FD0 /* Localizable.strings */; };
+		362E3AD12F07ABDC00568FD0 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 362E3ACF2F07ABDC00568FD0 /* Localizable.strings */; };
 		37D364252FD0478AB9C71B66 /* Montserrat-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 44D765EE3F9E47DD96843DC4 /* Montserrat-ExtraLightItalic.ttf */; };
 		3B41A2EC9D4D48C3B2F0B112 /* Montserrat-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D9209754A8294B95AB921D7C /* Montserrat-ExtraBold.ttf */; };
 		3CF9AAD50EEA4304AA17D179 /* Montserrat-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 0F095F3CDA864108B73A9493 /* Montserrat-Thin.ttf */; };
@@ -35,6 +36,7 @@
 		DD1AA897055F4BC2B66F7518 /* Montserrat-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2387BD939063436DAE81B132 /* Montserrat-BlackItalic.ttf */; };
 		E676F1BE0DF949C3BC0FF9E7 /* Montserrat-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 14A3BA06A4CC41FA829B1D07 /* Montserrat-Medium.ttf */; };
 		F4995F2C89B64B508B51CA0D /* RobotoSlab-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 6B919DB7331F4D13BD2C6F6C /* RobotoSlab-Medium.ttf */; };
+		FBC6DD43344E23E3E23FB9CB /* libPods-ota.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 21673BB89C3D73AA8E4AA46C /* libPods-ota.a */; };
 		FE6C36D55F5A4ECABEE8641C /* Montserrat-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = FBBA933174254E42BA8564C2 /* Montserrat-VariableFont_wght.ttf */; };
 /* End PBXBuildFile section */
 
@@ -56,15 +58,19 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = ota/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = ota/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		14A3BA06A4CC41FA829B1D07 /* Montserrat-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-Medium.ttf"; path = "../src/Assets/Fonts/Montserrat-Medium.ttf"; sourceTree = "<group>"; };
+		20B5A72A44D7F290895FF4F9 /* Pods-ota.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ota.release.xcconfig"; path = "Target Support Files/Pods-ota/Pods-ota.release.xcconfig"; sourceTree = "<group>"; };
+		21673BB89C3D73AA8E4AA46C /* libPods-ota.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ota.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2297C014E1084C1CA7A40DC1 /* Montserrat-BoldItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-BoldItalic.ttf"; path = "../src/Assets/Fonts/Montserrat-BoldItalic.ttf"; sourceTree = "<group>"; };
 		2387BD939063436DAE81B132 /* Montserrat-BlackItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-BlackItalic.ttf"; path = "../src/Assets/Fonts/Montserrat-BlackItalic.ttf"; sourceTree = "<group>"; };
 		2E4AB19303484DC685D6ED1A /* Montserrat-ThinItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ThinItalic.ttf"; path = "../src/Assets/Fonts/Montserrat-ThinItalic.ttf"; sourceTree = "<group>"; };
-		364A1EBA2D9FF0B200673D35 /* ota-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ota-Bridging-Header.h"; sourceTree = "<group>"; };
+		362E3AA62F0790A000568FD0 /* ota-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ota-Bridging-Header.h"; sourceTree = "<group>"; };
+		362E3ACC2F07ABBA00568FD0 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = Localizable.strings; sourceTree = "<group>"; };
+		362E3ACE2F07ABC000568FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = ../en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		362E3AD02F07ABDC00568FD0 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		362E3AD22F07ABE000568FD0 /* ar */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ar; path = ar.lproj/Localizable.strings; sourceTree = "<group>"; };
 		36831E0E2DF07B8A0078C547 /* ota.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = ota.entitlements; path = ota/ota.entitlements; sourceTree = "<group>"; };
-		3B4392A12AC88292D35C810B /* Pods-ota.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ota.debug.xcconfig"; path = "Target Support Files/Pods-ota/Pods-ota.debug.xcconfig"; sourceTree = "<group>"; };
 		44D765EE3F9E47DD96843DC4 /* Montserrat-ExtraLightItalic.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "Montserrat-ExtraLightItalic.ttf"; path = "../src/Assets/Fonts/Montserrat-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
-		5709B34CF0A7D63546082F79 /* Pods-ota.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ota.release.xcconfig"; path = "Target Support Files/Pods-ota/Pods-ota.release.xcconfig"; sourceTree = "<group>"; };
-		5DCACB8F33CDC322A6C60F78 /* libPods-ota.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-ota.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		4DF67A8DC6D7792CB1E2F2A0 /* Pods-ota.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ota.debug.xcconfig"; path = "Target Support Files/Pods-ota/Pods-ota.debug.xcconfig"; sourceTree = "<group>"; };
 		63E8BE76E19C486DA965B071 /* RobotoSlab-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoSlab-Regular.ttf"; path = "../src/Assets/Fonts/RobotoSlab-Regular.ttf"; sourceTree = "<group>"; };
 		6B919DB7331F4D13BD2C6F6C /* RobotoSlab-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoSlab-Medium.ttf"; path = "../src/Assets/Fonts/RobotoSlab-Medium.ttf"; sourceTree = "<group>"; };
 		7415F8FA3CF14271AA132FA7 /* RobotoSlab-Light.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "RobotoSlab-Light.ttf"; path = "../src/Assets/Fonts/RobotoSlab-Light.ttf"; sourceTree = "<group>"; };
@@ -93,7 +99,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0C80B921A6F3F58F76C31292 /* libPods-ota.a in Frameworks */,
+				FBC6DD43344E23E3E23FB9CB /* libPods-ota.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -103,6 +109,7 @@
 		13B07FAE1A68108700A75B9A /* ota */ = {
 			isa = PBXGroup;
 			children = (
+				362E3AC22F07AB4600568FD0 /* ar.lproj */,
 				E448DB2E2EF9731D004D2EFF /* Restart.xcodeproj */,
 				36831E0E2DF07B8A0078C547 /* ota.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -110,6 +117,8 @@
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
+				362E3AA62F0790A000568FD0 /* ota-Bridging-Header.h */,
+				362E3ACF2F07ABDC00568FD0 /* Localizable.strings */,
 			);
 			name = ota;
 			sourceTree = "<group>";
@@ -118,9 +127,17 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				5DCACB8F33CDC322A6C60F78 /* libPods-ota.a */,
+				21673BB89C3D73AA8E4AA46C /* libPods-ota.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		362E3AC22F07AB4600568FD0 /* ar.lproj */ = {
+			isa = PBXGroup;
+			children = (
+				362E3ACB2F07ABBA00568FD0 /* Localizable.strings */,
+			);
+			path = ar.lproj;
 			sourceTree = "<group>";
 		};
 		832341AE1AAA6A7D00B99B32 /* Libraries */ = {
@@ -133,7 +150,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				364A1EBA2D9FF0B200673D35 /* ota-Bridging-Header.h */,
 				13B07FAE1A68108700A75B9A /* ota */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -188,8 +204,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				3B4392A12AC88292D35C810B /* Pods-ota.debug.xcconfig */,
-				5709B34CF0A7D63546082F79 /* Pods-ota.release.xcconfig */,
+				4DF67A8DC6D7792CB1E2F2A0 /* Pods-ota.debug.xcconfig */,
+				20B5A72A44D7F290895FF4F9 /* Pods-ota.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -209,13 +225,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "ota" */;
 			buildPhases = (
-				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
+				39F3BEA67B3863C14A98B373 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */,
-				E235C05ADACE081382539298 /* [CP] Copy Pods Resources */,
+				EB7BCFBB2713DD8B1EF0FE36 /* [CP] Embed Pods Frameworks */,
+				C154E85B7664EEB9652DA7EC /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -246,6 +262,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ar,
 			);
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
@@ -299,6 +316,8 @@
 				4C5E3280272A402AB1304FF3 /* Montserrat-SemiBoldItalic.ttf in Resources */,
 				3CF9AAD50EEA4304AA17D179 /* Montserrat-Thin.ttf in Resources */,
 				66F14ED67F4944D2A4D533A7 /* Montserrat-ThinItalic.ttf in Resources */,
+				362E3ACD2F07ABBA00568FD0 /* Localizable.strings in Resources */,
+				362E3AD12F07ABDC00568FD0 /* Localizable.strings in Resources */,
 				FE6C36D55F5A4ECABEE8641C /* Montserrat-VariableFont_wght.ttf in Resources */,
 				01D57E27347647B7BADFAAB2 /* RobotoSlab-Light.ttf in Resources */,
 				F4995F2C89B64B508B51CA0D /* RobotoSlab-Medium.ttf in Resources */,
@@ -327,28 +346,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT $REACT_NATIVE_XCODE\"\n";
 		};
-		00EEFC60759A1932668264C0 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ota/Pods-ota-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-ota/Pods-ota-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ota/Pods-ota-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */ = {
+		39F3BEA67B3863C14A98B373 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -370,7 +368,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		E235C05ADACE081382539298 /* [CP] Copy Pods Resources */ = {
+		C154E85B7664EEB9652DA7EC /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -391,6 +389,27 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ota/Pods-ota-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		EB7BCFBB2713DD8B1EF0FE36 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ota/Pods-ota-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ota/Pods-ota-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ota/Pods-ota-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -404,10 +423,31 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		362E3ACB2F07ABBA00568FD0 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				362E3ACC2F07ABBA00568FD0 /* ar */,
+				362E3ACE2F07ABC000568FD0 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		362E3ACF2F07ABDC00568FD0 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				362E3AD02F07ABDC00568FD0 /* en */,
+				362E3AD22F07ABE000568FD0 /* ar */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 3B4392A12AC88292D35C810B /* Pods-ota.debug.xcconfig */;
+			baseConfigurationReference = 4DF67A8DC6D7792CB1E2F2A0 /* Pods-ota.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -438,7 +478,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5709B34CF0A7D63546082F79 /* Pods-ota.release.xcconfig */;
+			baseConfigurationReference = 20B5A72A44D7F290895FF4F9 /* Pods-ota.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

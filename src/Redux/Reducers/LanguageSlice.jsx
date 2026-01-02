@@ -1,8 +1,10 @@
 import {createSlice} from '@reduxjs/toolkit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getLocales} from 'react-native-localize';
-import {I18nManager} from 'react-native';
+import {I18nManager, NativeModules, Platform} from 'react-native';
 import i18n from '../../i18n/i18n';
+
+const {RTLManager} = NativeModules;
 const initialState = {
   globalLanguage: null,
 };
@@ -21,9 +23,14 @@ export const {setGlobalLanguage} = languageSlice.actions;
 
 // Helper function to handle RTL based on language
 const updateRTL = language => {
-  const isRTL = language === 'ar'; // RTL for Arabic
+  const isRTL = language === 'ar';
+
   I18nManager.allowRTL(isRTL);
   I18nManager.forceRTL(isRTL);
+
+  if (Platform.OS === 'ios' && NativeModules.RTLManager) {
+    NativeModules.RTLManager.setRTLDirection(isRTL);
+  }
 };
 
 export const initializeLanguage = lang => async dispatch => {

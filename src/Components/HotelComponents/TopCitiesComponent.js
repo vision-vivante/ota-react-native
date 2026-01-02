@@ -1,15 +1,33 @@
-import {View, Text, FlatList, Image, I18nManager} from 'react-native';
-import React from 'react';
+import {
+  View,
+  Text,
+  FlatList,
+  Image,
+  I18nManager,
+  TouchableOpacity,
+} from 'react-native';
+import React, {useState, useEffect, useContext} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getTopHotelsThunk} from '../../Redux/Reducers/HotelReducer/GetHotelSlice';
 import {COLOR, typography} from '../../Config/AppStyling';
 import SkeletonPlaceholder from 'react-native-skeleton-placeholder';
 import {Images} from '../../Config';
+import {useNavigation} from '@react-navigation/native';
+import {RoomContext} from '../../Context/RoomContext';
 
 const TopCitiesComponent = () => {
   const dispatch = useDispatch();
+  const navigation = useNavigation();
   const {topHotels, topCities} = useSelector(state => state.hotelSlice);
-  const isRTL = I18nManager.isRTL; // RTL check
+  const isRTL = I18nManager.isRTL;
+  const [showSkeleton, setShowSkeleton] = useState(true);
+
+  const handleCityPress = item => {
+    // Handle city card press
+    console.log('City pressed:', item.cityName);
+    // Navigate to city details or hotel list
+    // navigation.navigate('CityHotels', { city: item });
+  };
 
   const renderEmptyComponent = () => {
     return (
@@ -47,7 +65,7 @@ const TopCitiesComponent = () => {
             style={{
               position: 'absolute',
               bottom: 28,
-              ...(isRTL ? {right: 38} : {left: 38}), // RTL support
+              ...(isRTL ? {right: 38} : {left: 38}),
               width: 200,
               backgroundColor: 'rgba(255, 255, 255, 0.95)',
               borderRadius: 12,
@@ -69,9 +87,12 @@ const TopCitiesComponent = () => {
   };
 
   const renderMultipleEmptyComponents = () => {
+    // Only show skeleton if data hasn't loaded yet
+    if (!showSkeleton) return null;
+
     return (
       <View style={{flexDirection: 'row'}}>
-        {Array.from({length: 5}).map((_, index) => (
+        {Array.from({length: 3}).map((_, index) => (
           <View key={index} style={{marginHorizontal: 5}}>
             {renderEmptyComponent()}
           </View>
@@ -91,7 +112,9 @@ const TopCitiesComponent = () => {
           backgroundColor: 'transparent',
           position: 'relative',
         }}>
-        <View
+        <TouchableOpacity
+          activeOpacity={0.85}
+          onPress={() => handleCityPress(item)}
           style={{
             width: 250,
             height: 340,
@@ -114,49 +137,65 @@ const TopCitiesComponent = () => {
               backgroundColor: 'rgba(0, 0, 0, 0.3)',
             }}
           />
-        </View>
-        <View
-          style={{
-            position: 'absolute',
-            bottom: 28,
-            width: 200,
-            ...(isRTL ? {right: 38} : {left: 38}), // RTL support
-            paddingHorizontal: 15,
-            paddingVertical: 8,
-            boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
-          }}>
-          <Text
+          <View
             style={{
-              fontFamily: typography.fontFamily.Montserrat.SemiBold,
-              fontSize: typography.fontSizes.fs13,
-              color: COLOR.WHITE,
-              textAlign: 'center',
+              position: 'absolute',
+              bottom: 28,
+              width: 200,
+              ...(isRTL ? {right: 38} : {left: 38}),
+              paddingHorizontal: 15,
+              paddingVertical: 8,
+              boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
             }}>
-            {item.cityName}
-          </Text>
-        </View>
+            <Text
+              style={{
+                fontFamily: typography.fontFamily.Montserrat.SemiBold,
+                fontSize: typography.fontSizes.fs13,
+                color: COLOR.WHITE,
+                textAlign: 'center',
+              }}>
+              {item.cityName}
+            </Text>
+          </View>
+        </TouchableOpacity>
       </View>
     );
   };
 
-  const fetchTopHotels = () => {
+  const fetchTopHotels = React.useCallback(() => {
     const details = {
       countryCode: 'IN',
       countryName: 'India',
     };
     dispatch(getTopHotelsThunk({details: details}));
-  };
+  }, [dispatch]);
+
+  // Hide skeleton as soon as data arrives
+  useEffect(() => {
+    if (topCities && topCities.length > 0) {
+      setShowSkeleton(false);
+    }
+  }, [topCities]);
+
+  // Auto-hide skeleton after 1.5 seconds maximum
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSkeleton(false);
+    }, 1500);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   React.useEffect(() => {
     fetchTopHotels();
-  }, [dispatch]);
+  }, [fetchTopHotels]);
 
   return (
     <View>
       <Text
         style={{
           fontFamily: typography.fontFamily.Montserrat.Bold,
-          marginHorizontal: 15, // Use marginHorizontal instead of marginLeft
+          marginHorizontal: 15,
           marginBottom: -15,
           fontSize: typography.fontSizes.fs22,
         }}>
@@ -169,7 +208,7 @@ const TopCitiesComponent = () => {
         ListEmptyComponent={renderMultipleEmptyComponents}
         horizontal
         showsHorizontalScrollIndicator={false}
-        inverted={isRTL} // RTL ke liye FlatList ko invert karo
+        inverted={isRTL}
       />
     </View>
   );

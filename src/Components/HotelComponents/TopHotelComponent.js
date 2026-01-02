@@ -1,5 +1,5 @@
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
-import React, {useContext} from 'react';
+import React, {useContext, useState, useEffect} from 'react';
 import {useDispatch, useSelector} from 'react-redux';
 import {getTopHotelsThunk} from '../../Redux/Reducers/HotelReducer/GetHotelSlice';
 import {COLOR, typography} from '../../Config/AppStyling';
@@ -10,9 +10,12 @@ import {RoomContext} from '../../Context/RoomContext';
 
 const TopHotelComponent = () => {
   const dispatch = useDispatch();
-  const {topHotels} = useSelector(state => state.hotelSlice);
+  const {topHotels, loading} = useSelector(state => state.hotelSlice);
   const navigation = useNavigation();
   const {setDefaultDates} = useContext(RoomContext);
+  const [showSkeleton, setShowSkeleton] = useState(true);
+  const [skeletonTimeout, setSkeletonTimeout] = useState(false);
+
   const renderEmptyComponent = () => {
     return (
       <View
@@ -33,10 +36,8 @@ const TopHotelComponent = () => {
               overflow: 'hidden',
               boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)',
             }}>
-            {/* Image Placeholder */}
             <SkeletonPlaceholder.Item width={250} height={340} />
           </View>
-          {/* Text Overlay Placeholder */}
           <View
             style={{
               position: 'absolute',
@@ -64,9 +65,10 @@ const TopHotelComponent = () => {
   };
 
   const renderMultipleEmptyComponents = () => {
+    // Show only 3 skeletons instead of 5 for faster perceived load
     return (
       <View style={{flexDirection: 'row'}}>
-        {Array.from({length: 5}).map((_, index) => (
+        {Array.from({length: 3}).map((_, index) => (
           <View key={index} style={{marginHorizontal: 5}}>
             {renderEmptyComponent()}
           </View>
@@ -77,7 +79,6 @@ const TopHotelComponent = () => {
 
   const detailsForTopHotels = item => {
     console.log('TopHotel clicked:', item.Name);
-    // Set default dates when clicking from top hotels
     console.log('Calling setDefaultDates from TopHotelComponent');
     setDefaultDates();
     console.log('Navigating to HotelDetail');
@@ -152,9 +153,54 @@ const TopHotelComponent = () => {
     dispatch(getTopHotelsThunk({details: details}));
   }, [dispatch]);
 
-  React.useEffect(() => {
+  // Hide skeleton after data loads OR after timeout
+  useEffect(() => {
+    if (topHotels && topHotels.length > 0) {
+      setShowSkeleton(false);
+    }
+  }, [topHotels]);
+
+  // Set a maximum skeleton display time of 2 seconds
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setSkeletonTimeout(true);
+      setShowSkeleton(false);
+    }, 2000); // Hide skeleton after 2 seconds max
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
     fetchTopHotels();
   }, [fetchTopHotels]);
+
+  // If skeleton timed out and still no data, show a message
+  if (skeletonTimeout && (!topHotels || topHotels.length === 0)) {
+    return (
+      <View>
+        <Text
+          style={{
+            fontFamily: typography.fontFamily.Montserrat.Bold,
+            marginLeft: 15,
+            marginBottom: 15,
+            fontSize: typography.fontSizes.fs22,
+          }}>
+          Top Hotels
+        </Text>
+        <View style={{paddingHorizontal: 15, paddingVertical: 20}}>
+          <Text
+            style={{
+              fontFamily: typography.fontFamily.Montserrat.Regular,
+              fontSize: typography.fontSizes.fs14,
+              color: COLOR.BLACK,
+              textAlign: 'center',
+            }}>
+            Unable to load hotels at the moment
+          </Text>
+        </View>
+      </View>
+    );
+  }
 
   return (
     <View>
@@ -171,7 +217,7 @@ const TopHotelComponent = () => {
         data={topHotels}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
-        ListEmptyComponent={renderMultipleEmptyComponents}
+        ListEmptyComponent={showSkeleton ? renderMultipleEmptyComponents : null}
         horizontal
         showsHorizontalScrollIndicator={false}
       />

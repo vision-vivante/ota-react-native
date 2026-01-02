@@ -26,6 +26,7 @@ const HotelPaymentsPage = () => {
   const {loadingSavedCard, savedCard} = useSelector(state => state.bookingList);
   const {guests, hotelStayStartDate, hotelStayEndDate, selectedRoom} =
     useContext(RoomContext);
+  console.log('selectedRoom_+_+_+_+_+_+_', selectedRoom);
 
   const {provider, hotelId, GiataId} = useContext(PolicyInfoContext);
   const renderContent = () => (
@@ -166,7 +167,7 @@ const HotelPaymentsPage = () => {
                   }}>
                   {selectedRoom.RoomName}
                 </Text>
-                <Text
+                {/* <Text
                   style={{
                     color: COLOR.DARK_TEXT_COLOR,
                     fontFamily: typography.fontFamily.Montserrat.Regular,
@@ -174,7 +175,7 @@ const HotelPaymentsPage = () => {
                     width: '60%',
                   }}>
                   {selectedRoom.RoomOccupancy.RoomNum} Room
-                </Text>
+                </Text> */}
               </View>
               <View style={{flexDirection: 'row', gap: 5}}>
                 {/* <Text

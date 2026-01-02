@@ -60,6 +60,7 @@ const removeToken = async () => {
     console.error('Error removing token:', error);
   }
 };
+
 export const createUserAccount = createAsyncThunk(
   'auth/createAccount',
   async ({details, contentToken}, {rejectWithValue}) => {
@@ -121,9 +122,11 @@ export const checkStoredToken = createAsyncThunk(
   async (_, {rejectWithValue}) => {
     try {
       const token = await getToken();
+      if (!token) {
+        return rejectWithValue('No token found');
+      }
       return {token};
     } catch (error) {
-      // await removeToken();
       return rejectWithValue('Token validation failed');
     }
   },
@@ -375,6 +378,8 @@ const authSlice = createSlice({
         state.isSuccess = true;
         state.authData = action.payload.data;
         state.userToken = action.payload.data.token;
+        // FIX: Token ko AsyncStorage mein save karo
+        saveToken(action.payload.data.token);
       })
       .addCase(loginUserWithPhone.rejected, (state, action) => {
         console.log('action.pyaload login user with phone', action.payload);
@@ -392,12 +397,15 @@ const authSlice = createSlice({
       .addCase(checkStoredToken.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isSuccess = true;
+        // Token mil gaya toh set kar do
         state.userToken = action.payload.token;
       })
       .addCase(checkStoredToken.rejected, (state, action) => {
         state.isLoading = false;
         state.isError = true;
         state.errorMessage = action.payload;
+        // Token nahi mila toh null set kar do
+        state.userToken = null;
       })
       .addCase(googleLogin.pending, state => {
         state.isLoading = true;

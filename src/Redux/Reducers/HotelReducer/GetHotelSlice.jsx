@@ -8,23 +8,23 @@ const initialState = {
   topHotels: [],
   topCities: [],
   loadingTopHotels: null,
-  setPage:'',
-  totalItems:'',
-  page:''
+  setPage: '',
+  totalItems: '',
+  page: '',
 };
 
 export const getAllHotelsThunk = createAsyncThunk(
   'hotels/getAllHotels',
-  async ({ details }, { rejectWithValue }) => {
+  async ({details}, {rejectWithValue}) => {
     try {
       const payload = {
         details: {
           ...details,
           GiataID: details.GiataID ?? null,
-          provider: details.provider ?? null, 
+          provider: details.provider ?? null,
         },
       };
-      console.log('PAYLOAD-====-=-=-=-=-=-=-=-=',payload)
+      console.log('PAYLOAD-====-=-=-=-=-=-=-=-=', payload);
 
       const response = await getHotels(payload);
       console.log('RESPONSE-0-0-0-0-0-0', response);
@@ -38,18 +38,18 @@ export const getAllHotelsThunk = createAsyncThunk(
 
 export const getTopHotelsThunk = createAsyncThunk(
   'hotels/getTopHotels',
-  async ({ details }, { rejectWithValue }) => {
+  async ({details}, {rejectWithValue}) => {
     try {
       const payload = {
         details: {
           ...details,
-          GiataID: details.GiataID ?? null,
-          provider: details.provider ?? null,
+          GiataID: details?.GiataID ?? null,
+          provider: details?.provider ?? null,
         },
       };
 
       const response = await getTopHotels(payload);
-      console.log('response in top hotels thunk', response);
+      console.log('response in top hotels thunk ++__++__++__', response);
 
       return response;
     } catch (error) {
@@ -75,7 +75,7 @@ const hotelSlice = createSlice({
       .addCase(getAllHotelsThunk.fulfilled, (state, action) => {
         state.loadingHotels = false;
         state.hotels = action.payload.result;
-        state.totalItems = action.payload.total
+        state.totalItems = action.payload.total;
       })
       .addCase(getAllHotelsThunk.rejected, (state, action) => {
         state.loadingHotels = false;

@@ -21,8 +21,14 @@ import {CardProvider} from './Context/CardDetailContext';
 import CustomStatusBar from './Components/UI/CustomStatusBar';
 import {PolicyInfoProvider} from './Context/PolicyInfoContext';
 import Config from 'react-native-config';
+import {I18nManager} from 'react-native';
 
 const App = () => {
+  I18nManager.allowRTL(true);
+  I18nManager.forceRTL(true);
+
+  console.log('RTL Enabled:', I18nManager.isRTL);
+
   return (
     <StripeProvider publishableKey="pk_test_HaildCNdMAkdT0HruXtJPvig">
       <KeyboardProvider>

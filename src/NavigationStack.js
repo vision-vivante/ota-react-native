@@ -49,9 +49,8 @@ const Tab = createBottomTabNavigator({
   },
 });
 
-// Auth Screens
+// Auth Screens (only for unauthenticated users)
 const AuthRoutes = {
-  Home: HomeStack,
   Login,
   CheckEmail,
   CreateAccount,
@@ -79,7 +78,8 @@ const tabLabels = {
 // Auth Stack (Login, Register, etc.)
 const AuthStack = () => (
   <Stack.Navigator
-    screenOptions={{headerShown: false, animationEnabled: false}}>
+    screenOptions={{headerShown: false, animationEnabled: false}}
+    initialRouteName="Login">
     {Object.keys(AuthRoutes).map(route => (
       <Stack.Screen key={route} name={route} component={AuthRoutes[route]} />
     ))}
@@ -208,15 +208,6 @@ const NavigationStack = () => {
   const navigationRef = useNavigationContainerRef();
   console.log('Auth data', authData);
 
-  // Helper function to determine which screen to show initially
-  const renderInitialScreen = () => {
-    if (!userToken) {
-      return <Stack.Screen name="AuthStack" component={AuthStack} />;
-    }
-
-    return <Stack.Screen name="MainTabs" component={MainTabs} />;
-  };
-
   useEffect(() => {
     GoogleSignin.configure({
       iosClientId:
@@ -286,11 +277,15 @@ const NavigationStack = () => {
   }
 
   return (
-    <NavigationContainer
-      ref={navigationRef}
-      onReady={() => setNavReady(true)}>
+    <NavigationContainer ref={navigationRef} onReady={() => setNavReady(true)}>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        {renderInitialScreen()}
+        {userToken ? (
+          // User is logged in - show main app
+          <Stack.Screen name="MainTabs" component={MainTabs} />
+        ) : (
+          // User is not logged in - show auth screens
+          <Stack.Screen name="AuthStack" component={AuthStack} />
+        )}
       </Stack.Navigator>
     </NavigationContainer>
   );

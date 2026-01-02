@@ -7,7 +7,6 @@ import {
   StyleSheet,
   FlatList,
   ActivityIndicator,
-  ScrollView,
   TouchableOpacity,
   Pressable,
   Platform,
@@ -56,7 +55,7 @@ const Hotels = ({navigation}) => {
 
   const hotelDataS = useSelector(state => state.hotelSlice);
 
-  // console.log('HOTELDATAS=-------=-=-=-=-=-', hotelDataS);
+  console.log('HOTELDATAS=-------=-=-=-=-=-', hotelDataS);
 
   const {
     setShowFilterModal,
@@ -384,171 +383,161 @@ const Hotels = ({navigation}) => {
           }}
         />
       )}
-      <ScrollView>
-        <TouchableWithoutFeedback
-          onPress={() => {
-            setShowModal(false);
-            setShowCurrencyModal(false);
-          }}>
-          <>
-            <View>
-              <ImageBackground
-                source={Images.PROFILE_BACKGROUND}
-                imageStyle={styles.headerImageStyle}>
-                <View style={styles.homeHeaderUpperContainer}>
+      <FlatList
+        data={activeTab === 'Hotels' ? filteredHotels : []}
+        renderItem={renderHotelCard}
+        keyExtractor={item => item.HotelID.toString()}
+        showsVerticalScrollIndicator={false}
+        nestedScrollEnabled={false}
+        ListHeaderComponent={
+          <TouchableWithoutFeedback
+            onPress={() => {
+              setShowModal(false);
+              setShowCurrencyModal(false);
+            }}>
+            <>
+              <View>
+                <ImageBackground
+                  source={Images.PROFILE_BACKGROUND}
+                  imageStyle={styles.headerImageStyle}>
+                  <View style={styles.homeHeaderUpperContainer}>
+                    <View>
+                      <Text style={styles.homeHeaderTitle}>
+                        {i18n.t('Hotel.hi')}{' '}
+                        {userProfileData?.name
+                          ? shortenTheName(userProfileData?.name)
+                          : 'Guest'}
+                      </Text>
+                    </View>
+                    <View style={styles.homeHeaderSecondaryOptions}>
+                      <LanguageSelector />
+                      <CurrencySelector />
+                      {/* <View style={styles.secondaryOptions}>
+                        <Image
+                          style={styles.secondaryOptionsImages}
+                          source={Images.DOTS}
+                        />
+                      </View> */}
+                    </View>
+                  </View>
                   <View>
-                    <Text style={styles.homeHeaderTitle}>
-                      {i18n.t('Hotel.hi')}{' '}
-                      {userProfileData?.name
-                        ? shortenTheName(userProfileData?.name)
-                        : 'Guest'}
+                    <Text style={styles.homeHeaderSubtitle}>
+                      {i18n.t('Hotel.bestService')}
                     </Text>
                   </View>
-                  <View style={styles.homeHeaderSecondaryOptions}>
-                    <LanguageSelector />
-                    <CurrencySelector />
-                    {/* <View style={styles.secondaryOptions}>
-                      <Image
-                        style={styles.secondaryOptionsImages}
-                        source={Images.DOTS}
-                      />
-                    </View> */}
+                  <View style={styles.homeTabContainer}>
+                    {renderTab(
+                      'Hotels',
+                      Images.HOTELS_ACTIVE,
+                      Images.HOTELS_INACTIVE,
+                    )}
+                    {renderTab(
+                      'Tours',
+                      Images.TOURS_ACTIVE,
+                      Images.TOURS_INACTIVE,
+                    )}
+                    {renderTab(
+                      'Flights',
+                      Images.FLIGHTS_ACTIVE,
+                      Images.FLIGHTS_INACTIVE,
+                    )}
+                    {renderTab('Car', Images.CARS_ACTIVE, Images.CARS_INACTIVE)}
                   </View>
-                </View>
-                <View>
-                  <Text style={styles.homeHeaderSubtitle}>
-                    {i18n.t('Hotel.bestService')}
+                </ImageBackground>
+                {renderSearchCard()}
+              </View>
+              <View style={styles.filterSortContainer}>
+                <TouchableOpacity
+                  style={styles.filterSortItem}
+                  onPress={() => {
+                    setShowFilterModal(true);
+                    console.log('filtermodalPressed');
+                  }}
+                  disabled={filteredHotels.length === 0}>
+                  {filteredHotels.length > 0 ? (
+                    <Image
+                      source={Images.FILTER_ACTIVE}
+                      style={styles.filterImage}
+                    />
+                  ) : (
+                    <Image
+                      source={Images.FILTER_INACTIVE}
+                      style={styles.filterImage}
+                    />
+                  )}
+                  <Text
+                    style={[
+                      styles.filterSortText,
+                      {
+                        color:
+                          hotelDataS.hotels.length > 0
+                            ? COLOR.PRIMARY
+                            : COLOR.DARK_TEXT_COLOR,
+                      },
+                    ]}>
+                    {i18n.t('Hotel.filter')}
                   </Text>
-                </View>
-                <View style={styles.homeTabContainer}>
-                  {renderTab(
-                    'Hotels',
-                    Images.HOTELS_ACTIVE,
-                    Images.HOTELS_INACTIVE,
-                  )}
-                  {renderTab(
-                    'Tours',
-                    Images.TOURS_ACTIVE,
-                    Images.TOURS_INACTIVE,
-                  )}
-                  {renderTab(
-                    'Flights',
-                    Images.FLIGHTS_ACTIVE,
-                    Images.FLIGHTS_INACTIVE,
-                  )}
-                  {renderTab('Car', Images.CARS_ACTIVE, Images.CARS_INACTIVE)}
-                </View>
-              </ImageBackground>
-              {renderSearchCard()}
-            </View>
-            <View style={styles.filterSortContainer}>
-              <TouchableOpacity
+                </TouchableOpacity>
+                {/* <TouchableOpacity
                 style={styles.filterSortItem}
-                onPress={() => {
-                  setShowFilterModal(true);
-                  console.log('filtermodalPressed');
-                }}
-                disabled={filteredHotels.length === 0}>
-                {filteredHotels.length > 0 ? (
+                disabled={hotelDataS.hotels.length === 0}>
+                {hotelDataS.hotels.length > 0 ? (
                   <Image
-                    source={Images.FILTER_ACTIVE}
-                    style={styles.filterImage}
+                    source={Images.SORT_ACTIVE}
+                    style={styles.filterSortImage}
                   />
                 ) : (
                   <Image
-                    source={Images.FILTER_INACTIVE}
-                    style={styles.filterImage}
+                    source={Images.SORT_INACTIVE}
+                    style={styles.filterSortImage}
                   />
                 )}
                 <Text
                   style={[
                     styles.filterSortText,
                     {
-                      color:
-                        hotelDataS.hotels.length > 0
-                          ? COLOR.PRIMARY
-                          : COLOR.DARK_TEXT_COLOR,
+                      color: hotelDataS.hotels.length > 0 ? COLOR.PRIMARY : COLOR.DARK_TEXT_COLOR,
                     },
                   ]}>
-                  {i18n.t('Hotel.filter')}
+                  Sort
                 </Text>
-              </TouchableOpacity>
-              {/* <TouchableOpacity
-              style={styles.filterSortItem}
-              disabled={hotelDataS.hotels.length === 0}>
-              {hotelDataS.hotels.length > 0 ? (
-                <Image
-                  source={Images.SORT_ACTIVE}
-                  style={styles.filterSortImage}
-                />
-              ) : (
-                <Image
-                  source={Images.SORT_INACTIVE}
-                  style={styles.filterSortImage}
-                />
-              )}
-              <Text
-                style={[
-                  styles.filterSortText,
-                  {
-                    color: hotelDataS.hotels.length > 0 ? COLOR.PRIMARY : COLOR.DARK_TEXT_COLOR,
-                  },
-                ]}>
-                Sort
-              </Text>
-            </TouchableOpacity> */}
+              </TouchableOpacity> */}
+              </View>
+            </>
+          </TouchableWithoutFeedback>
+        }
+        ListEmptyComponent={
+          hotelDataS.loadingHotels ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                minHeight: 200,
+              }}>
+              <ActivityIndicator size="large" color={COLOR.PRIMARY} />
             </View>
-            <View style={{height: Matrics.screenHeight}}>
-              <FlatList
-                data={activeTab === 'Hotels' ? filteredHotels : []}
-                renderItem={renderHotelCard}
-                keyExtractor={item => item.HotelID.toString()}
-                showsVerticalScrollIndicator={false}
-                nestedScrollEnabled={true}
-                ListFooterComponent={() => (
-                  <View style={styles.paginationContainer}>
-                    <CustomPagination
-                      totalItems={hotelDataS.totalItems}
-                      pageSize={10}
-                      currentPage={page}
-                      onPageChange={newPage => setPage(newPage)}
-                    />
-                    {/* <Pagination
-                      totalItems={hotelDataS.totalItems}
-                      pageSize={10}
-                      currentPage={page}
-                      onPageChange={newPage => setPage(newPage)}
-                      btnStyle='#6d338a'
-                      inactiveTextColor="#333"
-                    /> */}
-                  </View>
-                )}
-                ListEmptyComponent={
-                  hotelDataS.loadingHotels ? (
-                    <View
-                      style={{
-                        flex: 1,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        minHeight: 200,
-                      }}>
-                      <ActivityIndicator size="large" color={COLOR.PRIMARY} />
-                    </View>
-                  ) : (
-                    <View style={styles.emptyFlatListContainer}>
-                      <TopHotelComponent />
-                      <TopCitiesComponent />
-                    </View>
-                  )
-                }
-                initialNumToRender={10}
-                maxToRenderPerBatch={10}
-                windowSize={5}
-              />
+          ) : (
+            <View style={styles.emptyFlatListContainer}>
+              <TopHotelComponent />
+              <TopCitiesComponent />
             </View>
-          </>
-        </TouchableWithoutFeedback>
-      </ScrollView>
+          )
+        }
+        initialNumToRender={10}
+        maxToRenderPerBatch={10}
+        windowSize={5}
+      />
+      {filteredHotels.length > 0 && (
+        <View style={styles.fixedPaginationContainer}>
+          <CustomPagination
+            totalItems={hotelDataS.totalItems}
+            pageSize={10}
+            currentPage={page}
+            onPageChange={newPage => setPage(newPage)}
+          />
+        </View>
+      )}
       <View
         style={{
           width: Matrics.screenWidth * 0.95,
@@ -772,5 +761,26 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff', // keep it fixed
     borderTopWidth: 1,
     borderTopColor: '#ddd',
+  },
+  fixedPaginationContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    paddingVertical: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fff',
+    borderTopWidth: 1,
+    borderTopColor: '#ddd',
+    // Add shadow for better visibility
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: -2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 5,
   },
 });

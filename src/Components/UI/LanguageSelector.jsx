@@ -6,6 +6,8 @@ import {
   Text,
   Alert,
   Pressable,
+  Platform,
+  Linking,
 } from 'react-native';
 import React, {useContext, useRef} from 'react';
 import {COLOR, Matrics, typography} from '../../Config/AppStyling';
@@ -15,7 +17,7 @@ import {useDispatch} from 'react-redux';
 import RNRestart from 'react-native-restart';
 import {HeaderOptionContext} from '../../Context/HeaderOptionContext';
 import {useTranslation} from 'react-i18next';
-import { restartApp } from '../../Utils/AppRestart';
+import {restartApp} from '../../Utils/AppRestart';
 
 const LanguageSelector = () => {
   const dispatch = useDispatch();
@@ -29,46 +31,71 @@ const LanguageSelector = () => {
   const languages = ['ar', 'en'];
   const selectedLanguage = i18n.language;
 
+  const openIOSSettings = () => {
+    Linking.openSettings(); // Direct app settings
+  };
+
   const handleLanguageChange = language => {
-    // If the selected language is the same as current language, just close the modal
     if (language === selectedLanguage) {
       setShowModal(false);
       return;
     }
 
-    // Prevent multiple rapid taps
     if (isProcessing.current) {
       return;
     }
 
     isProcessing.current = true;
 
+    // 🔹 iOS FLOW
+    if (Platform.OS === 'ios') {
+      Alert.alert(
+        'Change your app language',
+        "Here's how:\n\n1. Go to your Settings\n2. Pick your language\n3. Reopen the app",
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => {
+              setShowModal(false);
+              isProcessing.current = false;
+            },
+          },
+          {
+            text: 'Go to Settings',
+            onPress: () => {
+              setShowModal(false);
+              openIOSSettings();
+              isProcessing.current = false;
+            },
+          },
+        ],
+      );
+      return;
+    }
+
+    // 🔹 ANDROID FLOW (as it is)
     Alert.alert(
       'Language Change',
       'The app needs to restart to apply the new language settings.',
       [
         {
           text: 'Cancel',
+          style: 'cancel',
           onPress: () => {
             setShowModal(false);
             isProcessing.current = false;
           },
-          style: 'cancel',
         },
         {
           text: 'OK',
           onPress: () => {
             dispatch(setLanguageWithStorage(language));
             setShowModal(false);
-           restartApp();
+            restartApp(); // RNRestart
           },
         },
       ],
-      {
-        onDismiss: () => {
-          isProcessing.current = false;
-        },
-      },
     );
   };
 
