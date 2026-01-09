@@ -1,7 +1,7 @@
 if (__DEV__) {
   require('./../ReactotronConfig');
 }
-import React from 'react';
+import React, {useEffect} from 'react';
 import NavigationStack from './NavigationStack';
 import {Provider} from 'react-redux';
 import {Store} from './Redux/store';
@@ -22,12 +22,42 @@ import CustomStatusBar from './Components/UI/CustomStatusBar';
 import {PolicyInfoProvider} from './Context/PolicyInfoContext';
 import Config from 'react-native-config';
 import {I18nManager} from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useDispatch} from 'react-redux';
+import {initializeLanguage} from './Redux/Reducers/LanguageSlice';
+
+const AppContent = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    // Initialize language on app start
+    dispatch(initializeLanguage());
+  }, [dispatch]);
+
+  return (
+    <>
+      <HeaderOptionProvider>
+        <CardProvider>
+          <ConfirmationModalProvider>
+            <RoomProvider>
+              <PolicyInfoProvider>
+                <FilterProvider>
+                  <NavigationStack />
+                  <Toast config={toastConfig} autoHide={true} />
+                </FilterProvider>
+              </PolicyInfoProvider>
+            </RoomProvider>
+          </ConfirmationModalProvider>
+        </CardProvider>
+      </HeaderOptionProvider>
+    </>
+  );
+};
 
 const App = () => {
-  I18nManager.allowRTL(true);
-  I18nManager.forceRTL(true);
-
-  console.log('RTL Enabled:', I18nManager.isRTL);
+  // ❌ Remove these hardcoded lines - they cause the issue!
+  // I18nManager.allowRTL(true);
+  // I18nManager.forceRTL(true);
 
   return (
     <StripeProvider publishableKey="pk_test_HaildCNdMAkdT0HruXtJPvig">
@@ -37,20 +67,7 @@ const App = () => {
             <CustomStatusBar />
             <Provider store={Store}>
               <I18nextProvider i18n={i18n}>
-                <HeaderOptionProvider>
-                  <CardProvider>
-                    <ConfirmationModalProvider>
-                      <RoomProvider>
-                        <PolicyInfoProvider>
-                          <FilterProvider>
-                            <NavigationStack />
-                            <Toast config={toastConfig} autoHide={true} />
-                          </FilterProvider>
-                        </PolicyInfoProvider>
-                      </RoomProvider>
-                    </ConfirmationModalProvider>
-                  </CardProvider>
-                </HeaderOptionProvider>
+                <AppContent />
               </I18nextProvider>
             </Provider>
           </SafeAreaProvider>

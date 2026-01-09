@@ -4,7 +4,7 @@ import {getLocales} from 'react-native-localize';
 import {I18nManager, NativeModules, Platform} from 'react-native';
 import i18n from '../../i18n/i18n';
 
-const {RTLManager} = NativeModules;
+
 const initialState = {
   globalLanguage: null,
 };
@@ -21,50 +21,90 @@ const languageSlice = createSlice({
 
 export const {setGlobalLanguage} = languageSlice.actions;
 
-// Helper function to handle RTL based on language
-const updateRTL = language => {
+// 🔧 FIXED: Helper function to handle RTL based on language
+const updateRTL = async (language) => {
   const isRTL = language === 'ar';
-
+  
+  console.log('🔄 Setting RTL for language:', language, 'isRTL:', isRTL);
+  console.log('📱 Current RTL state BEFORE:', I18nManager.isRTL);
+  
+  // Force RTL settings
   I18nManager.allowRTL(isRTL);
   I18nManager.forceRTL(isRTL);
-
-  if (Platform.OS === 'ios' && NativeModules.RTLManager) {
-    NativeModules.RTLManager.setRTLDirection(isRTL);
+  
+  // iOS specific RTL handling
+  if (Platform.OS === 'ios') {
+  I18nManager.doLeftAndRightSwapInRTL();
   }
+  
+  console.log('📱 Current RTL state AFTER:', I18nManager.isRTL !== isRTL);
+  
+  // Return whether restart is needed
+  return I18nManager.isRTL !== isRTL;
 };
 
-export const initializeLanguage = lang => async dispatch => {
+export const initializeLanguage = () => async dispatch => {
   try {
-    const deviceLang = getLocales()[0]?.languageCode || 'en';
     const savedLang = await AsyncStorage.getItem('language');
-    if (savedLang === null) {
-      dispatch(setGlobalLanguage(deviceLang));
-      i18n.changeLanguage(deviceLang);
-      updateRTL(deviceLang);
-    } else {
-      // Subsequent launch: use saved language
-      console.log('Using saved language:', savedLang);
-      dispatch(setGlobalLanguage(savedLang));
-      i18n.changeLanguage(savedLang);
-      updateRTL(savedLang);
+    const deviceLang = getLocales()[0]?.languageCode || 'en';
+    
+    // Determine which language to use
+    const languageToUse = savedLang || deviceLang;
+    
+    console.log('🚀 Initializing app with language:', languageToUse);
+    console.log('💾 Saved language:', savedLang);
+    console.log('📱 Device language:', deviceLang);
+    
+    // Set Redux state
+    dispatch(setGlobalLanguage(languageToUse));
+    
+    // Change i18n language
+    await i18n.changeLanguage(languageToUse);
+    
+    // Update RTL settings
+    const needsRestart = await updateRTL(languageToUse);
+    
+    // Save language if it wasn't saved before
+    if (!savedLang) {
+      await AsyncStorage.setItem('language', languageToUse);
     }
+    
+    console.log('✅ Language initialized successfully');
+    console.log('🔄 Needs restart:', needsRestart);
+    
   } catch (error) {
-    console.error('Error initializing language:', error);
-    const fallbackLang = getLocales()[0]?.languageCode || 'en';
-    dispatch(setGlobalLanguage(fallbackLang));
-    i18n.changeLanguage(fallbackLang);
-    updateRTL(fallbackLang);
+    console.error('❌ Error initializing language:', error);
+    
+    // Fallback
+    // const fallbackLang = 'en';
+    // dispatch(setGlobalLanguage(fallbackLang));
+    // await i18n.changeLanguage(fallbackLang);
+    // await updateRTL(fallbackLang);
   }
 };
 
 export const setLanguageWithStorage = language => async dispatch => {
   try {
+    console.log('🔄 Changing language to:', language);
+    
+    // Save to AsyncStorage FIRST
     await AsyncStorage.setItem('language', language);
+    
+    // Update Redux state
     dispatch(setGlobalLanguage(language));
-    i18n.changeLanguage(language);
-    updateRTL(language);
+    
+    // Change i18n language
+    await i18n.changeLanguage(language);
+    
+    // Update RTL settings
+    const needsRestart = await updateRTL(language);
+    
+    console.log('✅ Language changed successfully');
+    console.log('🔄 Needs restart:', needsRestart);
+    
   } catch (error) {
-    console.error('Error saving language:', error);
+    console.error('❌ Error saving language:', error);
+    throw error;
   }
 };
 
