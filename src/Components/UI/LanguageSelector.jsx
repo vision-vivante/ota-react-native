@@ -34,40 +34,34 @@ const LanguageSelector = () => {
   const languages = ['ar', 'en'];
   const selectedLanguage = i18n.language;
 
-  console.log('SELECTED LANGUAGE', selectedLanguage)
+  console.log('SELECTED LANGUAGE', selectedLanguage);
 
   // 🔹 iOS: Sync language when app returns from Settings
-  useEffect(() => {
-    if (Platform.OS === 'ios') {
-      const handleAppStateChange = async (nextAppState) => {
-        if (nextAppState === 'active') {
-          try {
-            const savedLanguage = await AsyncStorage.getItem('language');
-            
-            if (savedLanguage && savedLanguage !== i18n.language) {
-              // Change language properly
-              await dispatch(setLanguageWithStorage(savedLanguage));
-              
-              // Restart to apply changes
-              setTimeout(() => {
-                RNRestart.Restart();
-              }, 100);
-            }
-          } catch (error) {
-            console.error('Error syncing language:', error);
-          }
-        }
-      };
+  // useEffect(() => {
+  //   if (Platform.OS === 'ios') {
+  //     const handleAppStateChange = async nextAppState => {
+  //       if (nextAppState === 'active') {
+  //         try {
+  //           const savedLanguage = await AsyncStorage.getItem('language');
 
-      const subscription = AppState.addEventListener('change', handleAppStateChange);
+  //           if (savedLanguage && savedLanguage !== i18n.language) {
+  //             // Change language properly
+  //             await dispatch(setLanguageWithStorage(savedLanguage));
 
-      return () => {
-        subscription?.remove();
-      };
-    }
-  }, [i18n, dispatch]);
+  //             // Restart to apply changes
+  //             setTimeout(() => {
+  //               RNRestart.Restart();
+  //             }, 100);
+  //           }
+  //         } catch (error) {
+  //           console.error('Error syncing language:', error);
+  //         }
+  //       }
+  //     };
+  //   }
+  // }, [i18n, dispatch]);
 
-  const handleLanguageChange = async (language) => {
+  const handleLanguageChange = async language => {
     if (language === selectedLanguage) {
       setShowModal(false);
       return;
@@ -83,7 +77,9 @@ const LanguageSelector = () => {
     if (Platform.OS === 'ios') {
       Alert.alert(
         'Change your app language',
-        "To change the app language on iOS: \n\n1. Tap 'Go to Settings'\n2. Find this app in the list\n3. Tap 'Language'\n4. Select '" + (language === 'ar' ? 'Arabic' : 'English') + "'\n5. Return to the app",
+        "To change the app language on iOS: \n\n1. Tap 'Go to Settings'\n2. Find this app in the list\n3. Tap 'Language'\n4. Select '" +
+          (language === 'ar' ? 'Arabic' : 'English') +
+          "'\n5. Return to the app",
         [
           {
             text: 'Cancel',
@@ -131,9 +127,9 @@ const LanguageSelector = () => {
             try {
               // Save language using Redux action (handles i18n + RTL)
               await dispatch(setLanguageWithStorage(language));
-              
+
               setShowModal(false);
-              
+
               // Restart app to apply changes
               setTimeout(() => {
                 restartApp();

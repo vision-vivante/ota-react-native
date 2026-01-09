@@ -12,10 +12,13 @@ class AppDelegate: RCTAppDelegate {
   ) -> Bool {
     self.moduleName = "ota"
     self.dependencyProvider = RCTAppDependencyProvider()
-    if #available(iOS 9.0, *) {
+    if UIView.userInterfaceLayoutDirection(
+      for: UISemanticContentAttribute.unspecified
+    ) == .rightToLeft {
       UIView.appearance().semanticContentAttribute = .forceRightToLeft
+    } else {
+      UIView.appearance().semanticContentAttribute = .forceLeftToRight
     }
-
     // You can add your custom initial props in the dictionary below.
     // They will be passed down to the ViewController used by React Native.
     self.initialProps = [:]
@@ -29,7 +32,7 @@ class AppDelegate: RCTAppDelegate {
 
   override func application(
     _ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-  ) -> Bool { 
+  ) -> Bool {
     // Add any other URL handlers you're using (e.g. Facebook SDK)
     return ApplicationDelegate.shared.application(app, open: url, options: options)
       || GIDSignIn.sharedInstance.handle(url)

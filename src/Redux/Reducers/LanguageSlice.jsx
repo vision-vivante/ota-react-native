@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getLocales} from 'react-native-localize';
 import {I18nManager, NativeModules, Platform} from 'react-native';
 import i18n from '../../i18n/i18n';
-
+import RNRestart from 'react-native-restart';
 
 const initialState = {
   globalLanguage: null,
@@ -22,86 +22,71 @@ const languageSlice = createSlice({
 export const {setGlobalLanguage} = languageSlice.actions;
 
 // 🔧 FIXED: Helper function to handle RTL based on language
-const updateRTL = async (language) => {
-  const isRTL = language === 'ar';
-  
-  console.log('🔄 Setting RTL for language:', language, 'isRTL:', isRTL);
-  console.log('📱 Current RTL state BEFORE:', I18nManager.isRTL);
-  
-  // Force RTL settings
-  I18nManager.allowRTL(isRTL);
-  I18nManager.forceRTL(isRTL);
-  
-  // iOS specific RTL handling
-  if (Platform.OS === 'ios') {
-  I18nManager.doLeftAndRightSwapInRTL();
+const updateRTL = async language => {
+  const shouldBeRTL = language === 'ar';
+  const currentlyRTL = I18nManager.isRTL;
+
+  console.log('🔄 RTL check:', {
+    language,
+    shouldBeRTL,
+    currentlyRTL,
+  });
+
+  // ✅ No change needed
+  if (shouldBeRTL === currentlyRTL) {
+    return false;
   }
-  
-  console.log('📱 Current RTL state AFTER:', I18nManager.isRTL !== isRTL);
-  
-  // Return whether restart is needed
-  return I18nManager.isRTL !== isRTL;
+
+  // ✅ Apply change
+  I18nManager.allowRTL(shouldBeRTL);
+  I18nManager.forceRTL(shouldBeRTL);
+
+  return true; // restart REQUIRED
 };
 
 export const initializeLanguage = () => async dispatch => {
   try {
     const savedLang = await AsyncStorage.getItem('language');
-    const deviceLang = getLocales()[0]?.languageCode || 'en';
-    
-    // Determine which language to use
-    const languageToUse = savedLang || deviceLang;
-    
-    console.log('🚀 Initializing app with language:', languageToUse);
-    console.log('💾 Saved language:', savedLang);
-    console.log('📱 Device language:', deviceLang);
-    
-    // Set Redux state
+    const languageToUse = savedLang || 'en';
+
     dispatch(setGlobalLanguage(languageToUse));
-    
-    // Change i18n language
     await i18n.changeLanguage(languageToUse);
-    
-    // Update RTL settings
+
     const needsRestart = await updateRTL(languageToUse);
-    
-    // Save language if it wasn't saved before
-    if (!savedLang) {
-      await AsyncStorage.setItem('language', languageToUse);
+
+    // 🔒 Prevent infinite restart loop
+    const restartDone = await AsyncStorage.getItem('__rtl_restart_done__');
+
+    if (
+      needsRestart &&
+      Platform.OS === 'ios' &&
+      restartDone !== languageToUse
+    ) {
+      // Mark restart as done for this language
+      await AsyncStorage.setItem('__rtl_restart_done__', languageToUse);
+
+      RNRestart.Restart();
     }
-    
-    console.log('✅ Language initialized successfully');
-    console.log('🔄 Needs restart:', needsRestart);
-    
   } catch (error) {
-    console.error('❌ Error initializing language:', error);
-    
-    // Fallback
-    // const fallbackLang = 'en';
-    // dispatch(setGlobalLanguage(fallbackLang));
-    // await i18n.changeLanguage(fallbackLang);
-    // await updateRTL(fallbackLang);
+    console.error('❌ initializeLanguage failed:', error);
   }
 };
 
 export const setLanguageWithStorage = language => async dispatch => {
   try {
-    console.log('🔄 Changing language to:', language);
-    
-    // Save to AsyncStorage FIRST
     await AsyncStorage.setItem('language', language);
-    
-    // Update Redux state
+
+    // 🔓 Allow restart again for new language
+    await AsyncStorage.removeItem('__rtl_restart_done__');
+
     dispatch(setGlobalLanguage(language));
-    
-    // Change i18n language
     await i18n.changeLanguage(language);
-    
-    // Update RTL settings
+
     const needsRestart = await updateRTL(language);
-    
-    console.log('✅ Language changed successfully');
-    console.log('🔄 Needs restart:', needsRestart);
-    
+
+    if (needsRestart && Platform.OS === 'ios') {
+      RNRestart.Restart();
+    }
   } catch (error) {
     console.error('❌ Error saving language:', error);
     throw error;

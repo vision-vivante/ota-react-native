@@ -122,6 +122,7 @@ const MainTabs = () => (
           hitSlop={0}
         />
       ),
+      // eslint-disable-next-line react/no-unstable-nested-components
       tabBarIcon: ({focused}) => {
         let iconSource;
         switch (route.name) {

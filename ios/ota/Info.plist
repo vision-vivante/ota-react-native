@@ -15,8 +15,12 @@
 	<key>CFBundleLocalizations</key>
 	<array>
 		<string>en</string>
-		<string>Arabic</string>
+		<string>ar</string>
 	</array>
+	<key>UIViewSemanticContentAttribute</key>
+	<string>ForceRightToLeft</string>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>en</string>
 	<key>CFBundleName</key>
 	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
